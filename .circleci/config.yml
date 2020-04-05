@@ -9,7 +9,9 @@ workflows:
     jobs:
       - maven/test # checkout, build, test, and upload test results
       - azure-acr/build-and-push-image:
-          login-server-name: esgijeeproject.azurecr.io
-          registry-name: esgiJeeProject
-          repo: basket-jee-app
-          tag: $CIRCLE_TAG
+        requires:
+          - maven/test
+        login-server-name: esgijeeproject.azurecr.io
+        registry-name: esgiJeeProject
+        repo: basket-jee-app
+        tag: $CIRCLE_TAG
