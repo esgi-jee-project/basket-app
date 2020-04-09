@@ -7,12 +7,15 @@ jobs:
         type: string
       registry:
         type: string
+      registry-name:
+        type: string
     steps:
       - setup_remote_docker
       - checkout
       - azure-cli/install
       - azure-cli/login-with-service-principal
-      - azure-acr/acr-login
+      - azure-acr/acr-login:
+          registry-name: << parameters.registry-name >>
       - docker/build:
           image: << parameters.image >>
           registry: << parameters.registry >>
