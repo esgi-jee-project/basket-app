@@ -19,11 +19,11 @@ jobs:
       - docker/build:
           image: << parameters.image >>
           registry: << parameters.registry >>
-          tag: '${CIRCLE_TAG}, latest'
+          tag: latest
       - docker/push:
           image: << parameters.image >>
           registry: << parameters.registry >>
-          tag: '${CIRCLE_TAG}, latest'
+          tag: latest
 
 orbs:
   maven: circleci/maven@0.0.12
