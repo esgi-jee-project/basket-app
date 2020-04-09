@@ -3,42 +3,13 @@ version: 2.1
 orbs:
   maven: circleci/maven@0.0.12
   azure-acr: circleci/azure-acr@0.2.0
-jobs:
-  build:
-    
-    working_directory: ~/basket-api
-
-    docker:
-      - image: circleci/openjdk:8-jdk-stretch
-
-    steps:
-
-      - checkout
-
-      - restore_cache:
-          key: basket-api-{{ checksum "pom.xml" }}
-      
-      - run: mvn dependency:go-offline
-      
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: basket-api-{{ checksum "pom.xml" }}
-      
-      - run: mvn package
-      
-      - store_test_results:
-          path: target/surefire-reports
-      
-      - store_artifacts:
-          path: target/basket-0.0.1-SNAPSHOT.jar
 workflows:
   maven_test:
     jobs:
-      - build
+      - maven/test
       - azure-acr/build-and-push-image:
           requires:
-            - build
+            - maven/test
           login-server-name: esgijeeproject.azurecr.io
           registry-name: esgiJeeProject
           repo: basket-jee-app
