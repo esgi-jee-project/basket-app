@@ -19,6 +19,7 @@ jobs:
       - docker/build:
           image: << parameters.image >>
           registry: << parameters.registry >>
+          tag: '$CIRCLE_TAG, latest'
       - docker/push:
           image: << parameters.image >>
           registry: << parameters.registry >>
