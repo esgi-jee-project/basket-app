@@ -38,7 +38,7 @@ workflows:
       - build
       - azure-acr/build-and-push-image:
           requires:
-            - maven/test
+            - build
           login-server-name: esgijeeproject.azurecr.io
           registry-name: esgiJeeProject
           repo: basket-jee-app
