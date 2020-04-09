@@ -1,16 +1,33 @@
 version: 2.1
+jobs:
+  build:
+    executor: docker/docker
+    parameters:
+      image:
+        type: string
+      registry:
+        type: string
+    steps:
+      - checkout
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - azure-acr/acr-login
+      - docker/build:
+          image: << parameters.image >>
+          registry: << parameters.registry >>
+      - docker/push:
+          image: << parameters.image >>
+          registry: << parameters.registry >>
 
 orbs:
   maven: circleci/maven@0.0.12
+  azure-cli: circleci/azure-cli@1.1.0
   azure-acr: circleci/azure-acr@0.2.0
+  docker: circleci/docker@1.0.1
 workflows:
   maven_test:
     jobs:
       - maven/test
-      - azure-acr/build-and-push-image:
-          requires:
-            - maven/test
-          login-server-name: esgijeeproject.azurecr.io
-          registry-name: esgiJeeProject
-          repo: basket-jee-app
-          tag: $CIRCLE_TAG
+      - build:
+          image: basket-jee-app
+          registry: esgijeeproject.azurecr.io

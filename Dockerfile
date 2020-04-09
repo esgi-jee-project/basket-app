@@ -4,7 +4,7 @@ COPY . /opt/basket-api
 
 WORKDIR /opt/basket-api
 
-RUN mvn dependency:go-offline && mvn package
+RUN mvn dependency:go-offline && mvn package -Dmaven.test.skip=true
 
 FROM openjdk:8-alpine
 
