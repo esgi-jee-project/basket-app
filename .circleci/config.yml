@@ -1,5 +1,7 @@
 version: 2.1
 jobs:
+  stagin_only:
+
   build:
     executor: docker/docker
     parameters:
@@ -38,5 +40,9 @@ workflows:
           requires:
             - maven/test
           image: basket-jee-app
+          filters:
+            branches:
+              only:
+                - master
           registry: esgijeeproject.azurecr.io
           registry-name: esgiJeeProject
