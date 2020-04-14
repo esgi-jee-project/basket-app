@@ -4,9 +4,13 @@ import com.esgi.jee.basket.db.Team;
 import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.TeamNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/teams")
@@ -14,33 +18,41 @@ import java.util.List;
 public class TeamController {
 
     private final TeamRepository repository;
+    private final PagedResourcesAssembler<Team> pagedResourcesAssembler;
+    private final TeamModelAssembler modelAssembler;
 
     @GetMapping
-    public List<Team> getAll() {
+    public PagedModel<TeamModel> getAll(Pageable pageable) {
 
-        return repository.findAll();
+        Page<Team> teams = repository.findAll(pageable);
+
+        return pagedResourcesAssembler.toModel(teams, modelAssembler);
     }
 
     @PostMapping()
-    public Team create(@RequestBody Team newTeam){
+    public ResponseEntity<TeamModel> create(@RequestBody Team newTeam){
 
-        return repository.save(newTeam);
+        TeamModel entityModel = modelAssembler.toModel(repository.save(newTeam));
+
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @GetMapping(path="/{id}")
-    public Team getById(@PathVariable Long id){
+    public TeamModel getById(@PathVariable Long id){
 
-        return repository.findById(id).orElseThrow(() -> new TeamNotFoundException(id));
+        return modelAssembler.toModel(repository.findById(id).orElseThrow(() -> new TeamNotFoundException(id)));
     }
 
     @PutMapping("/{id}")
-    public Team updateTeam(@RequestBody Team newTeam, @PathVariable Long id){
+    public TeamModel updateTeam(@RequestBody Team newTeam, @PathVariable Long id){
 
-        return repository.findById(id).map(team -> {
+        return modelAssembler.toModel(repository.findById(id).map(team -> {
             team.setCountry(newTeam.getCountry());
             team.setName(newTeam.getName());
 
             return repository.save(team);
-        }).orElseThrow(() -> new TeamNotFoundException(id));
+        }).orElseThrow(() -> new TeamNotFoundException(id)));
     }
 }
