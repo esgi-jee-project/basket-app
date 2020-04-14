@@ -3,9 +3,8 @@ package com.esgi.jee.basket.db;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -13,6 +12,7 @@ import javax.persistence.Id;
 public class Team {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)
@@ -20,4 +20,7 @@ public class Team {
 
     @Column(nullable = false)
     private String country;
+
+    @OneToMany(mappedBy = "player")
+    private Set<Contract> player;
 }

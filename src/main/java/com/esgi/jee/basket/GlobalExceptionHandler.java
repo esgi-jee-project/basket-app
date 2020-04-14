@@ -1,5 +1,7 @@
 package com.esgi.jee.basket;
 
+import com.esgi.jee.basket.db.ContractRepository;
+import com.esgi.jee.basket.exception.ContractNotFoundException;
 import com.esgi.jee.basket.exception.TeamNotFoundException;
 import com.esgi.jee.basket.exception.PlayerNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     String playerNotFound(PlayerNotFoundException exception){
+
+        return exception.getMessage();
+    }
+
+    @ExceptionHandler(ContractNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    String contractNotFound(ContractNotFoundException exception){
 
         return exception.getMessage();
     }
