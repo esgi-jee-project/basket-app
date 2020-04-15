@@ -24,7 +24,6 @@ public class PlayerController {
 
     @PostMapping(path = "/players")
     public Player create(@RequestBody Player player){
-
         return repository.save(player);
     }
 

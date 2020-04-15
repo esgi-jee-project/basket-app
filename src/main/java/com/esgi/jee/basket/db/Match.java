@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 
 @Entity
@@ -16,5 +17,17 @@ public class Match {
     private Long id;
 
     @Column()
-    private String date;
+    private LocalDate date;
+
+    @Column()
+    private String place;
+
+   /* @Column(nullable = false)
+    private Long idLocal;
+
+    @Column(nullable = false)
+    private Long idOpponent;
+
+    */
+
 }
