@@ -25,4 +25,7 @@ public class Team {
 
     @OneToMany(mappedBy = "player")
     private Set<Contract> player;
+
+    @Column(nullable = false)
+    private String place;
 }

@@ -22,12 +22,12 @@ public class Match {
     @Column()
     private String place;
 
-   /* @Column(nullable = false)
-    private Long idLocal;
 
-    @Column(nullable = false)
-    private Long idOpponent;
+    @GeneratedValue()
+    private String nameLocal;
 
-    */
+    @GeneratedValue()
+    private String nameOpponent;
+
 
 }

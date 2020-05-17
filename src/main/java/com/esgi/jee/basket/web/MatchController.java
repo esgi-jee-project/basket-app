@@ -2,9 +2,12 @@ package com.esgi.jee.basket.web;
 
 import com.esgi.jee.basket.db.Match;
 import com.esgi.jee.basket.db.MatchRepository;
+import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
+import com.esgi.jee.basket.services.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,6 +16,8 @@ import java.util.List;
 public class MatchController {
 
     private final MatchRepository matchRepository;
+    private final TeamRepository teamRepository;
+    private final MatchService matchService;
 
     @GetMapping(path = "/matchs")
     public List<Match> getAll() {
@@ -21,11 +26,15 @@ public class MatchController {
 
     @PostMapping(path = "/match")
     public Match create(@RequestBody Match match){
-        System.out.println(match.getDate());
-        System.out.println(match.getPlace());
-        System.out.println(match.getId());
         return matchRepository.save(match);
     }
+
+    @PostMapping(path = "/matchss")
+    public Match getTeams(@RequestBody Match match) {
+        Match m = matchService.createMatch(match);
+        return matchRepository.save(m);
+    }
+
 
     @GetMapping(path = "/match/{id}")
     public Match getOne(@PathVariable Long id){
