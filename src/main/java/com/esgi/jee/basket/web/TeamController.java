@@ -10,7 +10,12 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/teams")
@@ -22,7 +27,11 @@ public class TeamController {
     private final TeamModelAssembler modelAssembler;
 
     @GetMapping
-    public PagedModel<TeamModel> getAll(Pageable pageable) {
+    @PreAuthorize("hasRole('LEAGUE_ADMINISTRATOR')")
+    public PagedModel<TeamModel> getAll(Pageable pageable,  Authentication authentication) {
+
+        System.out.println(authentication.getName());
+        System.out.println(authentication.getAuthorities().toString());
 
         Page<Team> teams = repository.findAll(pageable);
 
@@ -30,7 +39,7 @@ public class TeamController {
     }
 
     @PostMapping()
-    public ResponseEntity<TeamModel> create(@RequestBody Team newTeam){
+    public ResponseEntity<TeamModel> create(@RequestBody @Valid Team newTeam){
 
         TeamModel entityModel = modelAssembler.toModel(repository.save(newTeam));
 

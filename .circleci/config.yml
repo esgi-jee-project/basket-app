@@ -1,7 +1,5 @@
 version: 2.1
 jobs:
-  stagin_only:
-
   build:
     executor: docker/docker
     parameters:
