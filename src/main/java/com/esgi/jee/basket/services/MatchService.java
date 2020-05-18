@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -24,21 +25,36 @@ public class MatchService {
     }
 
     public Match createMatch(Match match){
-        List<String> teamsName = teamRepository.findAll()
-                                            .stream()
-                                            .map(Team::getName)
-                                            .collect(Collectors.toList());
+        List<Team> teamsName = teamRepository.findAll();
 
         Random random = new Random();
 
-        String name = teamsName.get(random.nextInt(teamsName.size()));
-        System.out.println("Teams : " + name);
+        Team teamLocal = teamsName.get(random.nextInt(teamsName.size()));
+        teamsName.remove(teamLocal);
+        Team teamOpponent = teamsName.get(random.nextInt(teamsName.size()));
+
+        System.out.println("Team : " + teamLocal);
+        System.out.println("Team Adverse : " + teamOpponent);
+
+        String placeLocal = teamLocal.getPlace();
+
+        String placeOpponent = teamOpponent.getPlace();
+
+        List<String> places = Arrays.asList(placeLocal, placeOpponent);
+
+        String place = places.get(random.nextInt(places.size()));
+
+
+        System.out.println("Lieux : " + place);
 
         Match m = new Match();
-        match.setDate(match.getDate());
-        match.setNameLocal(name);
-        match.setNameOpponent(name);
-        System.out.println("Created project with name : " + match.getId());
+        m.setDate(match.getDate());
+        m.setPlace(place);
+        m.setNameLocal(teamLocal.getName());
+        m.setNameOpponent(teamOpponent.getName());
+        m.setScoreLocal(40 + (int)(Math.random() * ((200 - 40) + 1)));
+        m.setScoreOpponent(40 + (int)(Math.random() * ((200 - 40) + 1)));
+        System.out.println("Created match with ID : " + m.getId());
         return m;
     }
 }

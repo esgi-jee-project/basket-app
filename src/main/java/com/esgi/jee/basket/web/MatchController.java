@@ -32,9 +32,13 @@ public class MatchController {
     @PostMapping(path = "/matchss")
     public Match getTeams(@RequestBody Match match) {
         Match m = matchService.createMatch(match);
+        System.out.println("ID : " + m.getId());
+        System.out.println("Date : " + m.getDate());
+        System.out.println("Lieu : " + m.getPlace());
+        System.out.println("Equipe local : " + m.getNameLocal());
+        System.out.println("Equipe adverse : " + m.getNameOpponent());
         return matchRepository.save(m);
     }
-
 
     @GetMapping(path = "/match/{id}")
     public Match getOne(@PathVariable Long id){

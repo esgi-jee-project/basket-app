@@ -23,11 +23,20 @@ public class Match {
     private String place;
 
 
-    @GeneratedValue()
+    @Column()
     private String nameLocal;
 
-    @GeneratedValue()
+    @Column()
     private String nameOpponent;
+
+    @Column()
+    private int scoreLocal;
+
+    @Column()
+    private int scoreOpponent;
+
+
+
 
 
 }
