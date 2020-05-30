@@ -29,7 +29,7 @@ public class ContractController {
     private final ContractModelAssembler contractModelAssembler;
 
     @GetMapping(path = "/teams/{teamId}/contract")
-        public CollectionModel<PlayerModel> getPlayerInTeam(@PathVariable Long teamId){
+    public CollectionModel<PlayerModel> getPlayerInTeam(@PathVariable Long teamId){
 
         if(!teamRepository.existsById(teamId))
 

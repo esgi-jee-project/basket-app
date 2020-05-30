@@ -27,7 +27,6 @@ public class TeamController {
     private final TeamModelAssembler modelAssembler;
 
     @GetMapping
-    @PreAuthorize("hasRole('LEAGUE_ADMINISTRATOR')")
     public PagedModel<TeamModel> getAll(Pageable pageable,  Authentication authentication) {
 
         System.out.println(authentication.getName());
@@ -39,6 +38,7 @@ public class TeamController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('LEAGUE_ADMINISTRATOR')")
     public ResponseEntity<TeamModel> create(@RequestBody @Valid Team newTeam){
 
         TeamModel entityModel = modelAssembler.toModel(repository.save(newTeam));
@@ -55,6 +55,7 @@ public class TeamController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('LEAGUE_ADMINISTRATOR')")
     public TeamModel updateTeam(@RequestBody Team newTeam, @PathVariable Long id){
 
         return modelAssembler.toModel(repository.findById(id).map(team -> {
