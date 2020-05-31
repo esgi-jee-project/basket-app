@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Entity
@@ -34,9 +36,6 @@ public class Match {
 
     @Column()
     private int scoreOpponent;
-
-
-
 
 
 }
