@@ -54,6 +54,7 @@ public class MatchService {
         m.setNameOpponent(teamOpponent.getName());
         m.setScoreLocal(40 + (int)(Math.random() * ((200 - 40) + 1)));
         m.setScoreOpponent(40 + (int)(Math.random() * ((200 - 40) + 1)));
+
         System.out.println("Created match with ID : " + m.getId());
         return m;
     }
