@@ -5,9 +5,10 @@ import com.esgi.jee.basket.db.MatchRepository;
 import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,15 @@ import java.util.List;
 public class MatchController {
 
     private final MatchRepository matchRepository;
+    private final PagedResourcesAssembler<Match> pagedResourcesAssembler;
+    private final MatchModelAssembler modelAssembler;
     private final TeamRepository teamRepository;
     private final MatchService matchService;
 
     @GetMapping(path = "/matchs")
-    public List<Match> getAll() {
-        return matchRepository.findAll();
+    public PagedModel<MatchModel> getAll(Pageable pageable) {
+        Page<Match> matchPage = matchRepository.findAll(pageable);
+        return pagedResourcesAssembler.toModel(matchPage, modelAssembler);
     }
 
     @PostMapping(path = "/match")
