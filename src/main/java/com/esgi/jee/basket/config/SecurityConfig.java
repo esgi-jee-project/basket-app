@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.session.NullAuthenticated
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 @KeycloakConfiguration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     @Autowired
@@ -37,7 +37,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     {
         super.configure(http);
         http
+            .csrf().disable()
             .authorizeRequests()
-            .anyRequest().authenticated();
+            .anyRequest().permitAll();
     }
 }

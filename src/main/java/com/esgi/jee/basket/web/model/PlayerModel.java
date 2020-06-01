@@ -1,4 +1,4 @@
-package com.esgi.jee.basket.web;
+package com.esgi.jee.basket.web.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +11,4 @@ public class PlayerModel extends RepresentationModel<PlayerModel> {
     private String firstname;
 
     private String lastname;
-
-    private ContractModel currentContract;
 }

@@ -1,6 +1,5 @@
-package com.esgi.jee.basket.web;
+package com.esgi.jee.basket.web.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;

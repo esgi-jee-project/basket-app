@@ -1,9 +1,11 @@
 package com.esgi.jee.basket.web;
 
-import com.esgi.jee.basket.db.Player;
-import com.esgi.jee.basket.db.PlayerRepository;
-import com.esgi.jee.basket.db.TeamRepository;
+import com.esgi.jee.basket.db.*;
 import com.esgi.jee.basket.exception.PlayerNotFoundException;
+import com.esgi.jee.basket.web.assembler.PlayerModelAssembler;
+import com.esgi.jee.basket.web.assembler.PlayerWithContractModelAssembler;
+import com.esgi.jee.basket.web.model.PlayerModel;
+import com.esgi.jee.basket.web.model.PlayerWithContractModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,21 +15,21 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class PlayerController {
 
     private final PlayerRepository repository;
-    private final TeamRepository teamRepository;
+
     private final PagedResourcesAssembler<Player> pagedResourcesAssembler;
+
     private final PlayerModelAssembler playerModelAssembler;
+    private final PlayerWithContractModelAssembler playerWithContractModelAssembler;
 
     @GetMapping(path = "/players")
     public PagedModel<PlayerModel> getAll(Pageable pageable) {
-
-        /*return repository.findAll().stream()
-                .map(playerModelAssembler::toModel)
-                .collect(Collectors.toList());*/
 
         Page<Player> players = repository.findAll(pageable);
 
@@ -35,7 +37,7 @@ public class PlayerController {
     }
 
     @PostMapping(path = "/players")
-    public ResponseEntity<PlayerModel> create(@RequestBody Player player){
+    public ResponseEntity<PlayerModel> create(@RequestBody @Valid Player player){
 
         PlayerModel playerModel = playerModelAssembler.toModel(repository.save(player));
 
@@ -46,7 +48,9 @@ public class PlayerController {
     @GetMapping(path = "/players/{id}")
     public PlayerModel getOne(@PathVariable Long id){
 
-        return playerModelAssembler.toModel(repository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id)));
+        Player player = repository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
+
+        return playerModelAssembler.toModel(player);
     }
 
     @PutMapping(path = "/players/{id}")

@@ -2,12 +2,11 @@ package com.esgi.jee.basket.web;
 
 import com.esgi.jee.basket.db.Team;
 import com.esgi.jee.basket.db.TeamRepository;
+import com.esgi.jee.basket.web.assembler.TeamModelAssembler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.verify;
