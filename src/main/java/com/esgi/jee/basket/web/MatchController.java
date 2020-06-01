@@ -6,6 +6,8 @@ import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
@@ -30,9 +32,10 @@ public class MatchController {
     }
 
     @PostMapping(path = "/game")
-    public Match newGame(@RequestBody Match match){
+    public ResponseEntity<?> newGame(@RequestBody Match match){
         Match m = matchService.createGame(match);
-        return matchRepository.save(m);
+        matchRepository.save(m);
+        return new ResponseEntity<>(m, HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/matchss")
