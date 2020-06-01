@@ -28,15 +28,28 @@ public class MatchService {
     }
 
     public Match createGame (Match match) {
+        List<Team> teamsName = teamRepository.findAll();
+
         Match m = new Match();
         m.setDate(match.getDate());
         m.setPlace(match.getPlace());
-        m.setNameLocal(match.getNameLocal());
-        m.setNameOpponent(match.getNameOpponent());
+        for( Team team : teamsName ) {
+            System.out.println("Local name boucle");
+            if(team.getName() == match.getNameLocal()) {
+                System.out.println("Name local OK");
+                m.setNameLocal(match.getNameLocal());
+            }
+        }
+        for (Team team : teamsName) {
+            System.out.println("Opponent name boucle");
+            if(team.getName() == match.getNameOpponent() && match.getNameOpponent() != match.getNameLocal()) {
+                System.out.println("Opponent name OK");
+                m.setNameOpponent(match.getNameOpponent());
+            }
+        }
         m.setScoreLocal(40 + (int)(Math.random() * ((200 - 40) + 1)));
         m.setScoreOpponent(40 + (int)(Math.random() * ((200 - 40) + 1)));
-        System.out.println("Local team : " + match.getNameLocal());
-        System.out.println("Opponent team : " + match.getNameOpponent());
+        System.out.println("Fonction OK");
         return  m;
     }
 
