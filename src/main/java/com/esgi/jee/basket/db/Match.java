@@ -27,17 +27,17 @@ public class Match {
     private String place;
 
 
-    @Column()
+    @Column(nullable = false)
     private String nameLocal;
 
-    @Column()
+    @Column(nullable = false)
     private String nameOpponent;
 
-    @Column()
-    private int scoreLocal;
+    @Column(nullable = false)
+    private Integer scoreLocal;
 
-    @Column()
-    private int scoreOpponent;
+    @Column(nullable = false)
+    private Integer scoreOpponent;
 
     @ManyToMany()
     private Set<Player> playerTeamLocal;

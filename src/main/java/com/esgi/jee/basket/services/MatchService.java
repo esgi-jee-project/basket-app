@@ -35,21 +35,20 @@ public class MatchService {
         m.setPlace(match.getPlace());
         for( Team team : teamsName ) {
             System.out.println("Local name boucle");
-            if(team.getName() == match.getNameLocal()) {
-                System.out.println("Name local OK");
+            if(match.getNameLocal().equals(team.getName())) {
+                System.out.println("Name local OK : " + match.getNameLocal());
                 m.setNameLocal(match.getNameLocal());
             }
         }
         for (Team team : teamsName) {
             System.out.println("Opponent name boucle");
-            if(team.getName() == match.getNameOpponent() && match.getNameOpponent() != match.getNameLocal()) {
-                System.out.println("Opponent name OK");
+            if(match.getNameOpponent().equals(team.getName()) && !match.getNameOpponent().equals(match.getNameLocal())) {
+                System.out.println("Opponent name OK : " + match.getNameOpponent());
                 m.setNameOpponent(match.getNameOpponent());
             }
         }
         m.setScoreLocal(40 + (int)(Math.random() * ((200 - 40) + 1)));
         m.setScoreOpponent(40 + (int)(Math.random() * ((200 - 40) + 1)));
-        System.out.println("Fonction OK");
         return  m;
     }
 
