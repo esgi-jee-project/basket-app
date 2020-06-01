@@ -29,6 +29,12 @@ public class MatchController {
         return matchRepository.save(match);
     }
 
+    @PostMapping(path = "/game")
+    public Match newGame(@RequestBody Match match){
+        Match m = matchService.createGame(match);
+        return matchRepository.save(m);
+    }
+
     @PostMapping(path = "/matchss")
     public Match getTeams(@RequestBody Match match) {
         Match m = matchService.createMatch(match);

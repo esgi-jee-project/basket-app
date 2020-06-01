@@ -1,6 +1,7 @@
 package com.esgi.jee.basket.services;
 
 import com.esgi.jee.basket.db.Match;
+import com.esgi.jee.basket.db.MatchRepository;
 import com.esgi.jee.basket.db.Team;
 import com.esgi.jee.basket.db.TeamRepository;
 import org.springframework.data.domain.Page;
@@ -19,9 +20,24 @@ import java.util.stream.Collectors;
 public class MatchService {
 
     private TeamRepository teamRepository;
+    private MatchRepository matchRepository;
 
-    public MatchService(TeamRepository teamRepository) {
+    public MatchService(TeamRepository teamRepository, MatchRepository matchRepository) {
         this.teamRepository = teamRepository;
+        this.matchRepository = matchRepository;
+    }
+
+    public Match createGame (Match match) {
+        Match m = new Match();
+        m.setDate(match.getDate());
+        m.setPlace(match.getPlace());
+        m.setNameLocal(match.getNameLocal());
+        m.setNameOpponent(match.getNameOpponent());
+        m.setScoreLocal(40 + (int)(Math.random() * ((200 - 40) + 1)));
+        m.setScoreOpponent(40 + (int)(Math.random() * ((200 - 40) + 1)));
+        System.out.println("Local team : " + match.getNameLocal());
+        System.out.println("Opponent team : " + match.getNameOpponent());
+        return  m;
     }
 
     public Match createMatch(Match match){
