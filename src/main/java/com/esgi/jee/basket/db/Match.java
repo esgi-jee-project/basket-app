@@ -1,6 +1,8 @@
 package com.esgi.jee.basket.db;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,10 +42,12 @@ public class Match {
     private Integer scoreOpponent;
 
     @ManyToMany()
-    private Set<Player> playerTeamLocal;
+    @JsonSerialize
+    private List<Player> playerTeamLocal;
 
     @ManyToMany()
-    private Set<Player> playerTeamOpponent;
+    @JsonSerialize
+    private List<Player> playerTeamOpponent;
 
 
 }
