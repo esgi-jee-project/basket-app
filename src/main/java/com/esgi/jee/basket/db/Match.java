@@ -29,11 +29,15 @@ public class Match {
     private String place;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="team_local", nullable = false)
     @Column(nullable = false)
-    private String nameLocal;
+    private Team nameLocal;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="team_opponent", nullable = false)
     @Column(nullable = false)
-    private String nameOpponent;
+    private Team nameOpponent;
 
     @Column(nullable = false)
     private Integer scoreLocal;

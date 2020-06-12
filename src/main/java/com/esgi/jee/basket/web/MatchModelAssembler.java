@@ -1,6 +1,7 @@
 package com.esgi.jee.basket.web;
 
 import com.esgi.jee.basket.db.Match;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,13 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
         model.setNameOpponent(entity.getNameOpponent());
         model.setScoreLocal(entity.getScoreLocal());
         model.setScoreOpponent(entity.getScoreOpponent());
+        model.add(
+                linkTo(methodOn(MatchController.class).getOne(entity.getId())).withSelfRel(),
+                linkTo(methodOn(MatchController.class).getAll(PageRequest.of(0, 10))).withRel("players")
+        );
+        //model.setPlayerTeamLocal(entity.getPlayerTeamLocal());
+        //model.setPlayerTeamOpponent(entity.getPlayerTeamOpponent());
+
 
         /*model.add(
                 linkTo(methodOn(MatchController.class).getById(entity.getId())).withSelfRel()

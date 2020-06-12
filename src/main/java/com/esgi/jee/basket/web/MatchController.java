@@ -6,6 +6,7 @@ import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
