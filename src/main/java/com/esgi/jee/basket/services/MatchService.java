@@ -47,19 +47,20 @@ public class MatchService {
         for( Team team : idTeam ) {
             if(team.getId() != null) {
                 System.out.println("IDlocal OK : " + team.getId());
-                System.out.println("Namelocal OK : " + match.getNameLocal());
+                System.out.println("Namelocal OK : " + match.getNameLocal().getId());
 //                List<PlayerModel> playersLocal = contractRepository.findPlayerInTeam(team.getId())
 //                                                                    .stream()
 //                                                                    .map(player -> playerMatchModelAssembler.toModel(player))
 //                                                                    .collect(Collectors.toList());
                 m.setNameLocal(match.getNameLocal());
+                m.setNameLocal(teamMatchModelAssembler.toModel(match.getNameLocal()));
                 //m.setPlayerTeamLocal(playersLocal);
             }
         }
         for (Team team : idTeam) {
             if(team.getId() != null) {
                 System.out.println("OpponentID OK : " + team.getId());
-                System.out.println("OpponentName OK : " + match.getNameOpponent());
+                System.out.println("OpponentName OK : " + match.getNameOpponent().getId());
 //                List<PlayerModel> playersOpponent = contractRepository.findPlayerInTeam(team.getId())
 //                        .stream()
 //                        .map(player -> playerMatchModelAssembler.toModel(player))
