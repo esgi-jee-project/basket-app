@@ -45,9 +45,9 @@ public class MatchService {
         m.setDate(match.getDate());
         m.setPlace(match.getPlace());
         for( Team team : idTeam ) {
-            System.out.println("Local name boucle");
             if(team.getId() != null) {
-                System.out.println("Name local OK : " + match.getNameLocal());
+                System.out.println("IDlocal OK : " + team.getId());
+                System.out.println("Namelocal OK : " + match.getNameLocal());
 //                List<PlayerModel> playersLocal = contractRepository.findPlayerInTeam(team.getId())
 //                                                                    .stream()
 //                                                                    .map(player -> playerMatchModelAssembler.toModel(player))
@@ -57,9 +57,9 @@ public class MatchService {
             }
         }
         for (Team team : idTeam) {
-            System.out.println("Opponent name boucle");
             if(team.getId() != null) {
-                System.out.println("Opponent name OK : " + match.getNameOpponent());
+                System.out.println("OpponentID OK : " + team.getId());
+                System.out.println("OpponentName OK : " + match.getNameOpponent());
 //                List<PlayerModel> playersOpponent = contractRepository.findPlayerInTeam(team.getId())
 //                        .stream()
 //                        .map(player -> playerMatchModelAssembler.toModel(player))

@@ -31,12 +31,10 @@ public class Match {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="team_local", nullable = false)
-    @Column(nullable = false)
     private Team nameLocal;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="team_opponent", nullable = false)
-    @Column(nullable = false)
     private Team nameOpponent;
 
     @Column(nullable = false)

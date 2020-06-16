@@ -15,8 +15,8 @@ public class MatchModel extends RepresentationModel<TeamModel> {
 
     private LocalDate date;
     private String place;
-    private Team nameLocal;
-    private Team nameOpponent;
+    private TeamModel nameLocal;
+    private TeamModel nameOpponent;
     private Integer scoreLocal;
     private Integer scoreOpponent;
     private List<PlayerModel> playerTeamLocal;
