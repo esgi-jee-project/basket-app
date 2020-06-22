@@ -102,7 +102,6 @@ public class TeamServiceTest {
     @Test
     public void should_return_team_on_find_by_id(){
 
-        final TeamModel teamModel = getTestTeamModel();
         final Team teamRepo = getTestTeam();
 
         when(teamRepository.findById(id)).thenReturn(Optional.of(teamRepo));

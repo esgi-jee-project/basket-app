@@ -1,9 +1,9 @@
 package com.esgi.jee.basket.web;
 
-import com.esgi.jee.basket.db.Team;
-import com.esgi.jee.basket.services.TeamService;
-import com.esgi.jee.basket.web.assembler.TeamModelAssembler;
-import com.esgi.jee.basket.web.model.TeamModel;
+import com.esgi.jee.basket.db.Player;
+import com.esgi.jee.basket.services.PlayerService;
+import com.esgi.jee.basket.web.assembler.PlayerModelAssembler;
+import com.esgi.jee.basket.web.model.PlayerModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,74 +25,73 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TeamControllerTest {
+public class PlayerControllerTest {
 
-    private TeamController teamController;
+    private PlayerController playerController;
 
     @Mock
-    private TeamService teamService;
+    private PlayerService playerService;
 
-    final String name = "Chicago Bulls";
-    final String country = "Chicago";
+    final String firstname = "Michael";
+    final String lastname = "Jordan";
     final Long id = 1L;
 
     @Before
     public void setUp() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        this.teamController = new TeamController(teamService, new PagedResourcesAssembler<>(null, null), new TeamModelAssembler());
+        this.playerController = new PlayerController(playerService, new PagedResourcesAssembler<>(null, null), new PlayerModelAssembler());
     }
 
-    public Team getTestTeam(){
+    public Player getTestPlayer(){
 
-        return Team.builder()
+        return Player.builder()
                 .id(id)
-                .name(name)
-                .country(country)
+                .firstname(firstname)
+                .lastname(lastname)
                 .build();
     }
 
-    public TeamModel getTestTeamModel(){
+    public PlayerModel getTestPlayerModel(){
 
-        return new TeamModel(name, country);
+        return new PlayerModel(firstname, lastname);
     }
 
     @Test
     public void should_return_team(){
 
         Pageable pageable = PageRequest.of(0, 20);
-        List<Team> allTeams = Collections.singletonList(getTestTeam());
-        Page<Team> allTeamsPage = new PageImpl<>(allTeams, pageable, 40);
+        List<Player> allPlayer = Collections.singletonList(getTestPlayer());
+        Page<Player> allPlayerPage = new PageImpl<>(allPlayer, pageable, 40);
 
-        when(teamService.findAll(any(Pageable.class))).thenReturn(allTeamsPage);
+        when(playerService.findAll(any(Pageable.class))).thenReturn(allPlayerPage);
 
-        PagedModel<TeamModel> result = teamController.getAll(pageable);
+        PagedModel<PlayerModel> result = playerController.getAll(pageable);
         assertThat(result.getMetadata().getTotalElements()).isEqualTo(40);
         assertThat(result.getMetadata().getTotalPages()).isEqualTo(2);
         assertThat(result.getMetadata().getNumber()).isEqualTo(0);
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent()).anySatisfy(model -> {
-            assertThat(model.getName()).isEqualTo(name);
-            assertThat(model.getCountry()).isEqualTo(country);
+            assertThat(model.getFirstname()).isEqualTo(firstname);
+            assertThat(model.getLastname()).isEqualTo(lastname);
         });
     }
 
     @Test
     public void should_return_team_on_create() {
 
-        final TeamModel teamModel = getTestTeamModel();
-        final Team teamRepo = getTestTeam();
+        final PlayerModel playerModel = getTestPlayerModel();
+        final Player playerRepo = getTestPlayer();
 
-        when(teamService.create(any(TeamModel.class))).thenReturn(teamRepo);
+        when(playerService.create(any(PlayerModel.class))).thenReturn(playerRepo);
 
-        ResponseEntity<TeamModel> createdTeam = teamController.create(teamModel);
+        ResponseEntity<PlayerModel> createdTeam = playerController.create(playerModel);
         assertThat(createdTeam.getBody()).satisfies(model -> {
-            assertThat(model.getName()).isEqualTo(name);
-            assertThat(model.getCountry()).isEqualTo(country);
+            assertThat(model.getFirstname()).isEqualTo(firstname);
+            assertThat(model.getLastname()).isEqualTo(lastname);
         });
         assertThat(createdTeam.getStatusCodeValue()).isEqualTo(201);
         assertThat(createdTeam.getHeaders().containsKey("Location")).isTrue();

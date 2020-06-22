@@ -20,9 +20,7 @@ public class PlayerModelAssembler implements RepresentationModelAssembler<Player
     @Override
     public PlayerModel toModel(Player entity) {
 
-        PlayerModel model = new PlayerModel();
-        model.setFirstname(entity.getFirstname());
-        model.setLastname(entity.getLastname());
+        PlayerModel model = new PlayerModel(entity.getFirstname(), entity.getLastname());
 
         model.add(
                 linkTo(methodOn(PlayerController.class).getOne(entity.getId())).withSelfRel(),
