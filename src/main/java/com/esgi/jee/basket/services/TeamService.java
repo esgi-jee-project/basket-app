@@ -21,6 +21,11 @@ public class TeamService {
         return teamRepository.findAll(pageable);
     }
 
+    public boolean existsById(long id) {
+
+        return teamRepository.existsById(id);
+    }
+
     public Team create(TeamModel data){
 
         Team team = Team.builder()

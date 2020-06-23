@@ -1,16 +1,17 @@
 package com.esgi.jee.basket.db;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
+@Builder
 public class Contract {
 
     @Id
@@ -18,7 +19,6 @@ public class Contract {
     private Long id;
 
     @Column(nullable = false)
-    @NotNull
     private LocalDate startDate;
 
     private LocalDate endDate;

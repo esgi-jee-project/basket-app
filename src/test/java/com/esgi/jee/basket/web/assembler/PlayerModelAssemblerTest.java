@@ -28,12 +28,12 @@ public class PlayerModelAssemblerTest {
                     .lastname(lastname)
                 .build();
 
-        PlayerModel convertTeam = this.playerModelAssembler.toModel(toConvert);
+        PlayerModel convertPlayer = this.playerModelAssembler.toModel(toConvert);
 
-        assertThat(convertTeam.getFirstname()).isEqualTo(firstname);
-        assertThat(convertTeam.getLastname()).isEqualTo(lastname);
-        assertThat(convertTeam.getLink("self")).isNotEmpty();
-        assertThat(convertTeam.getLink("players")).isNotEmpty();
-        assertThat(convertTeam.getLink("contract")).isNotEmpty();
+        assertThat(convertPlayer.getFirstname()).isEqualTo(firstname);
+        assertThat(convertPlayer.getLastname()).isEqualTo(lastname);
+        assertThat(convertPlayer.getLink("self")).isNotEmpty();
+        assertThat(convertPlayer.getLink("players")).isNotEmpty();
+        assertThat(convertPlayer.getLink("contract")).isNotEmpty();
     }
 }

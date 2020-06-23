@@ -24,7 +24,7 @@ public class TeamModelAssembler implements RepresentationModelAssembler<Team, Te
             linkTo(TeamController.class).withRel("teams"),
             WebMvcLinkBuilder.linkTo(
                                 methodOn(ContractController.class)
-                                    .getPlayerInTeam(entity.getId(), PageRequest.of(0, 10))
+                                    .getTeamContract(entity.getId(), PageRequest.of(0, 10))
                             )
                             .withRel("contract")
         );

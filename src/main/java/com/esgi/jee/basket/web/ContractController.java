@@ -1,9 +1,14 @@
 package com.esgi.jee.basket.web;
 
-import com.esgi.jee.basket.db.*;
+import com.esgi.jee.basket.db.Contract;
+import com.esgi.jee.basket.db.Player;
+import com.esgi.jee.basket.db.Team;
 import com.esgi.jee.basket.exception.ContractNotFoundException;
 import com.esgi.jee.basket.exception.PlayerNotFoundException;
 import com.esgi.jee.basket.exception.TeamNotFoundException;
+import com.esgi.jee.basket.services.ContractService;
+import com.esgi.jee.basket.services.PlayerService;
+import com.esgi.jee.basket.services.TeamService;
 import com.esgi.jee.basket.web.assembler.ContractModelAssembler;
 import com.esgi.jee.basket.web.assembler.ContractWithPlayerModelAssembler;
 import com.esgi.jee.basket.web.assembler.ContractWithTeamModelAssembler;
@@ -26,9 +31,9 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ContractController {
 
-    private final PlayerRepository playerRepository;
-    private final TeamRepository teamRepository;
-    private final ContractRepository contractRepository;
+    private final PlayerService playerService;
+    private final TeamService teamService;
+    private final ContractService contractService;
 
     private final ContractModelAssembler contractModelAssembler;
     private final ContractWithPlayerModelAssembler contractWithPlayerModelAssembler;
@@ -37,13 +42,13 @@ public class ContractController {
     private final PagedResourcesAssembler<Contract> contractPagedResourcesAssembler;
 
     @GetMapping(path = "/teams/{teamId}/contract")
-    public PagedModel<ContractWithPlayerModel> getPlayerInTeam(@PathVariable Long teamId, Pageable pageable){
+    public PagedModel<ContractWithPlayerModel> getTeamContract(@PathVariable Long teamId, Pageable pageable){
 
-        if(!teamRepository.existsById(teamId))
+        if(!teamService.existsById(teamId))
 
             throw new TeamNotFoundException(teamId);
 
-        Page<Contract> allContract = contractRepository.findTeamContract(teamId, pageable);
+        Page<Contract> allContract = contractService.findTeamContract(teamId, pageable);
 
         return contractPagedResourcesAssembler.toModel(allContract, contractWithPlayerModelAssembler);
     }
@@ -51,29 +56,31 @@ public class ContractController {
     @GetMapping(path = "/players/{playerId}/contract")
     public PagedModel<ContractWithTeamModel> getPlayerContract(@PathVariable Long playerId, Pageable pageable){
 
-        Page<Contract> allContract = contractRepository.findPlayerContract(playerId, pageable);
+        if(!playerService.existsById(playerId))
+
+            throw new PlayerNotFoundException(playerId);
+
+        Page<Contract> allContract = contractService.findPlayerContract(playerId, pageable);
 
         return contractPagedResourcesAssembler.toModel(allContract, contractWithTeamModelAssembler);
     }
 
     @PostMapping(path = "/teams/{teamId}/contract/{playerId}")
-    public ResponseEntity<ContractModel> createContract(@PathVariable Long teamId, @PathVariable Long playerId, @RequestBody @Valid Contract contract){
+    public ResponseEntity<ContractModel> createContract(@PathVariable Long teamId, @PathVariable Long playerId, @RequestBody @Valid ContractModel contract){
 
-        Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+        Player player = playerService.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
+        Team team = teamService.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
 
-        contract.setPlayer(player);
-        contract.setTeam(team);
-
-        Contract newContract = contractRepository.save(contract);
+        Contract newContract = contractService.create(contract, player, team);
         ContractModel contractModel = contractModelAssembler.toModel(newContract);
 
         // TODO check if a contract already exist before link
 
-        if((contract.getEndDate() == null || contract.getEndDate().isAfter(LocalDate.now())) && contract.getStartDate().isBefore(LocalDate.now())){
+        boolean isCurrentContract = (contract.getEndDate() == null || contract.getEndDate().isAfter(LocalDate.now()))
+                                        && contract.getStartDate().isBefore(LocalDate.now());
 
-            player.setCurrentContract(newContract);
-            playerRepository.save(player);
+        if(isCurrentContract){
+            playerService.updateCurrentContract(playerId, newContract).orElseThrow(() -> new PlayerNotFoundException(playerId));
         }
 
         return ResponseEntity
@@ -84,22 +91,14 @@ public class ContractController {
     @GetMapping(path = "/contract/{id}")
     public ContractModel selectOne(@PathVariable Long id){
 
-        Contract contract = contractRepository.findById(id).orElseThrow(() -> new ContractNotFoundException(id));
+        Contract contract = contractService.findById(id).orElseThrow(() -> new ContractNotFoundException(id));
 
         return contractModelAssembler.toModel(contract);
     }
 
     @PutMapping(path = "/contract/{id}")
-    public ContractModel update(@PathVariable Long id, @RequestBody @Valid Contract updateContract){
+    public ContractModel update(@PathVariable Long id, @RequestBody @Valid ContractModel updateContract){
 
-        return contractModelAssembler.toModel(contractRepository.findById(id).map(contract -> {
-            // TODO think if we allow team and player modification or delete
-            //contract.setTeam(updateContract.getTeam());
-            //contract.setPlayer(updateContract.getPlayer());
-            contract.setStartDate(updateContract.getStartDate());
-            contract.setEndDate(updateContract.getEndDate());
-
-            return contract;
-        }).orElseThrow(() -> new ContractNotFoundException(id)));
+        return contractModelAssembler.toModel(contractService.update(id, updateContract).orElseThrow(() -> new ContractNotFoundException(id)));
     }
 }
