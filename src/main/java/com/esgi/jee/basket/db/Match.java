@@ -1,21 +1,17 @@
 package com.esgi.jee.basket.db;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Match {
 
     @Id
@@ -30,12 +26,12 @@ public class Match {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="team_local", nullable = false)
-    private Team nameLocal;
+    @JoinColumn(name="team_local_id", nullable = false)
+    private Team idNameLocal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="team_opponent", nullable = false)
-    private Team nameOpponent;
+    @JoinColumn(name="team_opponent_id", nullable = false)
+    private Team idNameOpponent;
 
     @Column(nullable = false)
     private Integer scoreLocal;
@@ -44,11 +40,9 @@ public class Match {
     private Integer scoreOpponent;
 
     @ManyToMany()
-    @JsonSerialize
     private List<Player> playerTeamLocal;
 
     @ManyToMany()
-    @JsonSerialize
     private List<Player> playerTeamOpponent;
 
 

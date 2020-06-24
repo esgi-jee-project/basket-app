@@ -22,8 +22,8 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
         MatchModel model = new MatchModel();
         model.setDate(entity.getDate());
         model.setPlace(entity.getPlace());
-        model.setNameLocal(teamMatchModelAssembler.toModel(entity.getNameLocal()));
-        model.setNameOpponent(teamMatchModelAssembler.toModel(entity.getNameOpponent()));
+        model.setNameLocal(teamMatchModelAssembler.toModel(entity.getIdNameLocal()));
+        model.setNameOpponent(teamMatchModelAssembler.toModel(entity.getIdNameOpponent()));
         model.setScoreLocal(entity.getScoreLocal());
         model.setScoreOpponent(entity.getScoreOpponent());
         model.add(

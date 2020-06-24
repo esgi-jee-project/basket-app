@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,27 +34,17 @@ public class MatchController {
         return pagedResourcesAssembler.toModel(matchPage, modelAssembler);
     }
 
-    @PostMapping(path = "/match")
-    public Match create(@RequestBody Match match){
-        return matchRepository.save(match);
-    }
-
     @PostMapping(path = "/game")
-    public ResponseEntity<?> newGame(@RequestBody Match match){
-        Match m = matchService.createGame(match);
-        matchRepository.save(m);
-        return new ResponseEntity<>(m, HttpStatus.CREATED);
-    }
+    public ResponseEntity<?> newGame(@RequestBody @Valid MatchCreateModel match){
+        try {
+            Match m = matchService.createGame(match);
+            modelAssembler.toModel(m);
+            matchRepository.save(m);
+            return new ResponseEntity<>(m, HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
-    @PostMapping(path = "/matchss")
-    public Match getTeams(@RequestBody Match match) {
-        Match m = matchService.createMatch(match);
-        System.out.println("ID : " + m.getId());
-        System.out.println("Date : " + m.getDate());
-        System.out.println("Lieu : " + m.getPlace());
-        System.out.println("Equipe local : " + m.getNameLocal());
-        System.out.println("Equipe adverse : " + m.getNameOpponent());
-        return matchRepository.save(m);
     }
 
     @GetMapping(path = "/match/{id}")
