@@ -5,8 +5,10 @@ import com.esgi.jee.basket.db.MatchRepository;
 import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
+import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
+import com.esgi.jee.basket.web.model.MatchCreateModel;
+import com.esgi.jee.basket.web.model.MatchModel;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.criterion.MatchMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

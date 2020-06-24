@@ -1,11 +1,12 @@
-package com.esgi.jee.basket.web;
+package com.esgi.jee.basket.web.assembler;
 
-import com.esgi.jee.basket.db.Contract;
 import com.esgi.jee.basket.db.Player;
+import com.esgi.jee.basket.web.PlayerController;
+import com.esgi.jee.basket.web.model.PlayerModel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -20,12 +21,10 @@ public class PlayerMatchModelAssembler implements RepresentationModelAssembler<P
     @Override
     public PlayerModel toModel(Player entity) {
 
-        PlayerModel model = new PlayerModel();
-        model.setFirstname(entity.getFirstname());
-        model.setLastname(entity.getLastname());
+        PlayerModel model = new PlayerModel(entity.getFirstname(), entity.getLastname());
          
         model.add(
-                linkTo(methodOn(PlayerController.class).getOne(entity.getId())).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(methodOn(PlayerController.class).getOne(entity.getId())).withSelfRel(),
                 linkTo(methodOn(PlayerController.class).getAll(PageRequest.of(0, 10))).withRel("players")
         );
 

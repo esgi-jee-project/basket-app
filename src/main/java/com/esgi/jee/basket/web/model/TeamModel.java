@@ -18,5 +18,6 @@ public class TeamModel extends RepresentationModel<TeamModel> {
     @NotNull
     private String country;
 
+    @NotNull
     private String place;
 }

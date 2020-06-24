@@ -1,9 +1,11 @@
-package com.esgi.jee.basket.web;
+package com.esgi.jee.basket.web.assembler;
 
 import com.esgi.jee.basket.db.Match;
-import com.esgi.jee.basket.db.Team;
+import com.esgi.jee.basket.web.MatchController;
+import com.esgi.jee.basket.web.model.MatchModel;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -27,7 +29,7 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
         model.setScoreLocal(entity.getScoreLocal());
         model.setScoreOpponent(entity.getScoreOpponent());
         model.add(
-                linkTo(methodOn(MatchController.class).getOne(entity.getId())).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(methodOn(MatchController.class).getOne(entity.getId())).withSelfRel(),
                 linkTo(methodOn(MatchController.class).getAll(PageRequest.of(0, 10))).withRel("players")
         );
         //model.setPlayerTeamLocal(entity.getPlayerTeamLocal());

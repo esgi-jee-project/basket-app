@@ -18,7 +18,7 @@ public class TeamModelAssembler implements RepresentationModelAssembler<Team, Te
 
     @Override
     public TeamModel toModel(Team entity) {
-        TeamModel model = new TeamModel(entity.getName(), entity.getCountry());
+        TeamModel model = new TeamModel(entity.getName(), entity.getCountry(), entity.getPlace());
         model.add(
             WebMvcLinkBuilder.linkTo(methodOn(TeamController.class).getById(entity.getId())).withSelfRel(),
             linkTo(TeamController.class).withRel("teams"),
