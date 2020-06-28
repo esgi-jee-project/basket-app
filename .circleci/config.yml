@@ -1,46 +1,26 @@
 version: 2.1
-jobs:
-  build:
-    executor: docker/docker
-    parameters:
-      image:
-        type: string
-      registry:
-        type: string
-      registry-name:
-        type: string
-    steps:
-      - setup_remote_docker
-      - checkout
-      - azure-cli/install
-      - azure-cli/login-with-service-principal
-      - azure-acr/acr-login:
-          registry-name: << parameters.registry-name >>
-      - docker/build:
-          image: << parameters.image >>
-          registry: << parameters.registry >>
-          tag: latest
-      - docker/push:
-          image: << parameters.image >>
-          registry: << parameters.registry >>
-          tag: latest
-
 orbs:
   maven: circleci/maven@0.0.12
-  azure-cli: circleci/azure-cli@1.1.0
-  azure-acr: circleci/azure-acr@0.2.0
-  docker: circleci/docker@1.0.1
+  aws-ecr: circleci/aws-ecr@6.5.0
+  aws-ecs: circleci/aws-ecs@0.0.10
 workflows:
   maven_test:
     jobs:
-      - maven/test
-      - build:
-          requires:
-            - maven/test
-          image: basket-jee-app
+      - maven/test:
           filters:
             branches:
               only:
                 - master
-          registry: esgijeeproject.azurecr.io
-          registry-name: esgiJeeProject
+      - aws-ecr/build-and-push-image:
+          requires:
+            - maven/test
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: '${MY_APP_PREFIX}'
+          region: AWS_REGION
+          tag: '${CIRCLE_SHA1},latest'
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build-and-push-image
+          family: '${MY_APP_PREFIX}'
+          cluster-name: '${MY_APP_PREFIX}'
+          container-image-name-updates: 'container=${MY_APP_PREFIX},tag=${CIRCLE_SHA1}'
