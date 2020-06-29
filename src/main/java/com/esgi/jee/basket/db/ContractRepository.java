@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ContractRepository extends JpaRepository<Contract, Long> {
@@ -35,4 +36,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
             "where c.id = ?1"
     )
     Optional<Contract> findById(Long aLong);
+
+    @Query("from Player player left join Contract c on c.id = player.currentContract.id where player.id in (select contract.player.id from Contract contract where contract.team.id = ?1)")
+    List<Player> findPlayerInTeam(Long idTeam);
 }
