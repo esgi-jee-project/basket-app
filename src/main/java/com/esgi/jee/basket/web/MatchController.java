@@ -8,6 +8,7 @@ import com.esgi.jee.basket.services.MatchService;
 import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.MatchModel;
+import com.esgi.jee.basket.web.model.MatchSetScoreModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -52,5 +53,12 @@ public class MatchController {
     public Match getOne(@PathVariable Long id){
 
         return matchRepository.findById(id).orElseThrow(() -> new MatchNotFoundException(id));
+    }
+    @PutMapping(path = "/matchs/{id}/score")
+    public Match setScore(@RequestBody @Valid MatchSetScoreModel match, @PathVariable Long id){
+        Match m = matchService.setScore(match,id);
+        modelAssembler.toModel(m);
+        return m;
+
     }
 }
