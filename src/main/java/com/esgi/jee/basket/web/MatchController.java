@@ -2,12 +2,15 @@ package com.esgi.jee.basket.web;
 
 import com.esgi.jee.basket.db.Match;
 import com.esgi.jee.basket.db.MatchRepository;
+import com.esgi.jee.basket.db.Player;
 import com.esgi.jee.basket.db.TeamRepository;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
 import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.MatchModel;
+import com.esgi.jee.basket.web.model.PlayerInsertionModel;
+import com.esgi.jee.basket.web.model.PlayerModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,5 +57,13 @@ public class MatchController {
     public Match getOne(@PathVariable Long id){
 
         return matchRepository.findById(id).orElseThrow(() -> new MatchNotFoundException(id));
+    }
+
+    @PutMapping(path = "/match/{id}/teamLocal/{idTeamLocal}")
+    public List<PlayerModel> addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable Long id, @PathVariable Long idTeamLocal) {
+
+        matchService.addPlayersLocal(players, id, idTeamLocal);
+
+        return new ArrayList<>();
     }
 }

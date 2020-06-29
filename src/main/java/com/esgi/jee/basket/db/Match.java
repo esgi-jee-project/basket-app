@@ -45,5 +45,8 @@ public class Match {
     @ManyToMany()
     private List<Player> playerTeamOpponent;
 
+    public void addPlayerTeamLocal(Player player) {
+        this.playerTeamLocal.add(player);
+    }
 
 }
