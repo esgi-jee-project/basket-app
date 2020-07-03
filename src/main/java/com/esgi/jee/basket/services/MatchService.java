@@ -43,16 +43,18 @@ public class MatchService {
         Team teamOpponent = teamRepository.findById(match.getIdTeamOpponent())
                                         .orElseThrow(() -> new InvalidFieldException("Team id " + match.getIdTeamOpponent() + " Not found"));
 
-        return Match.builder()
-                    .date(match.getDate())
-                    .place(match.getPlace())
-                    .idNameLocal(teamLocal)
-                    .idNameOpponent(teamOpponent)
-                    .scoreLocal(0)
-                    .scoreOpponent(0)
-                    .playerTeamLocal(new ArrayList<>())
-                    .playerTeamOpponent(new ArrayList<>())
-                    .build();
+        Match newMatch = Match.builder()
+                            .date(match.getDate())
+                            .place(match.getPlace())
+                            .idNameLocal(teamLocal)
+                            .idNameOpponent(teamOpponent)
+                            .scoreLocal(0)
+                            .scoreOpponent(0)
+                            .playerTeamLocal(new ArrayList<>())
+                            .playerTeamOpponent(new ArrayList<>())
+                        .build();
+
+        return matchRepository.save(newMatch);
     }
     public List<Player> addPlayersLocal (List<PlayerInsertionModel> players, Long idMatch, Long idTeamLocal) {
         Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
@@ -76,7 +78,7 @@ public class MatchService {
         return null;
     }
     public Match setScore(MatchSetScoreModel score, long idMatch) {
-        Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
+        Match match = matchRepository.findByIdWithTeam(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
         match.setScoreLocal(score.getScoreLocalTeam());
         match.setScoreOpponent(score.getScoreOpponentTeam());
         matchRepository.save(match);
