@@ -14,11 +14,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class MatchModelAssembler implements RepresentationModelAssembler<Match, MatchModel> {
-    public MatchModelAssembler(TeamMatchModelAssembler teamMatchModelAssembler) {
+    public MatchModelAssembler(TeamModelAssembler teamMatchModelAssembler) {
         this.teamMatchModelAssembler = teamMatchModelAssembler;
     }
 
-    private TeamMatchModelAssembler teamMatchModelAssembler;
+    private TeamModelAssembler teamMatchModelAssembler;
 
     public MatchModel toModel(Match entity) {
         MatchModel model = new MatchModel();
@@ -34,11 +34,6 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
         );
         //model.setPlayerTeamLocal(entity.getPlayerTeamLocal());
         //model.setPlayerTeamOpponent(entity.getPlayerTeamOpponent());
-
-
-        /*model.add(
-                linkTo(methodOn(MatchController.class).getById(entity.getId())).withSelfRel()
-        );*/
 
         return model;
     }

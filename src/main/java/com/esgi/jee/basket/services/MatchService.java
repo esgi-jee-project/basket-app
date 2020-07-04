@@ -3,10 +3,12 @@ package com.esgi.jee.basket.services;
 import com.esgi.jee.basket.db.*;
 import com.esgi.jee.basket.exception.InvalidFieldException;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
+import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.web.assembler.PlayerMatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.PlayerInsertionModel;
 import com.esgi.jee.basket.web.model.PlayerModel;
+import com.esgi.jee.basket.web.model.MatchSetScoreModel;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,6 @@ public class MatchService {
     private PlayerMatchModelAssembler playerMatchModelAssembler;
 
     public MatchService(TeamRepository teamRepository, MatchRepository matchRepository, ContractRepository contractRepository, PlayerMatchModelAssembler playerMatchModelAssembler) {
-
         this.teamRepository = teamRepository;
         this.matchRepository = matchRepository;
         this.contractRepository = contractRepository;
@@ -42,16 +43,18 @@ public class MatchService {
         Team teamOpponent = teamRepository.findById(match.getIdTeamOpponent())
                                         .orElseThrow(() -> new InvalidFieldException("Team id " + match.getIdTeamOpponent() + " Not found"));
 
-        return Match.builder()
-                    .date(match.getDate())
-                    .place(match.getPlace())
-                    .idNameLocal(teamLocal)
-                    .idNameOpponent(teamOpponent)
-                    .scoreLocal(0)
-                    .scoreOpponent(0)
-                    .playerTeamLocal(new ArrayList<>())
-                    .playerTeamOpponent(new ArrayList<>())
-                    .build();
+        Match newMatch = Match.builder()
+                            .date(match.getDate())
+                            .place(match.getPlace())
+                            .idNameLocal(teamLocal)
+                            .idNameOpponent(teamOpponent)
+                            .scoreLocal(0)
+                            .scoreOpponent(0)
+                            .playerTeamLocal(new ArrayList<>())
+                            .playerTeamOpponent(new ArrayList<>())
+                        .build();
+
+        return matchRepository.save(newMatch);
     }
     public List<Player> addPlayersLocal (List<PlayerInsertionModel> players, Long idMatch, Long idTeamLocal) {
         Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
@@ -73,5 +76,12 @@ public class MatchService {
 
         matchRepository.save(match);
         return null;
+    }
+    public Match setScore(MatchSetScoreModel score, long idMatch) {
+        Match match = matchRepository.findByIdWithTeam(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
+        match.setScoreLocal(score.getScoreLocalTeam());
+        match.setScoreOpponent(score.getScoreOpponentTeam());
+        matchRepository.save(match);
+        return match;
     }
 }

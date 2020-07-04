@@ -11,6 +11,7 @@ import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.MatchModel;
 import com.esgi.jee.basket.web.model.PlayerInsertionModel;
 import com.esgi.jee.basket.web.model.PlayerModel;
+import com.esgi.jee.basket.web.model.MatchSetScoreModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -31,7 +32,6 @@ public class MatchController {
     private final MatchRepository matchRepository;
     private final PagedResourcesAssembler<Match> pagedResourcesAssembler;
     private final MatchModelAssembler modelAssembler;
-    private final TeamRepository teamRepository;
     private final MatchService matchService;
 
     @GetMapping(path = "/matchs")
@@ -44,9 +44,9 @@ public class MatchController {
     public ResponseEntity<?> newGame(@RequestBody @Valid MatchCreateModel match){
         try {
             Match m = matchService.createGame(match);
-            modelAssembler.toModel(m);
-            matchRepository.save(m);
-            return new ResponseEntity<>(m, HttpStatus.CREATED);
+
+            return new ResponseEntity<>(modelAssembler.toModel(m), HttpStatus.CREATED);
+
         } catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -54,9 +54,17 @@ public class MatchController {
     }
 
     @GetMapping(path = "/match/{id}")
-    public Match getOne(@PathVariable Long id){
+    public MatchModel getOne(@PathVariable Long id){
 
-        return matchRepository.findById(id).orElseThrow(() -> new MatchNotFoundException(id));
+        Match findMatch = matchRepository.findByIdWithTeam(id).orElseThrow(() -> new MatchNotFoundException(id));
+
+        return modelAssembler.toModel(findMatch);
+    }
+
+    @PutMapping(path = "/matchs/{id}/score")
+    public MatchModel setScore(@RequestBody @Valid MatchSetScoreModel match, @PathVariable Long id){
+        Match m = matchService.setScore(match,id);
+        return modelAssembler.toModel(m);
     }
 
     @PutMapping(path = "/match/{id}/teamLocal/{idTeamLocal}")
