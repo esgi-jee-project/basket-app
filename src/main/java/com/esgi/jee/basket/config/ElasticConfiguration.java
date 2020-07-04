@@ -18,13 +18,24 @@ public class ElasticConfiguration extends AbstractElasticsearchConfiguration {
     @Value("${basket.elastic.host}")
     private String host;
 
+    @Value("${basket.elastic.user}")
+    private String user;
+
+    @Value("${basket.elastic.password}")
+    private String password;
+
+    @Value("${basket.elastic.isLocal:false}")
+    private boolean local;
+
+
     @Bean
     @Override
     public RestHighLevelClient elasticsearchClient(){
 
-        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                                                                        .connectedTo(this.host)
-                                                                        .build();
-        return RestClients.create(clientConfiguration).rest();
+
+        return RestClients.create(local
+            ? ClientConfiguration.builder().connectedToLocalhost().build()
+            : ClientConfiguration.builder().connectedTo(host).usingSsl().withBasicAuth(user, password).build())
+            .rest();
     }
 }
