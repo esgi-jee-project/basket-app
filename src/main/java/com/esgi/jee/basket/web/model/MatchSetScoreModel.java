@@ -17,5 +17,4 @@ public class MatchSetScoreModel extends RepresentationModel<TeamModel> {
     private Integer scoreLocalTeam;
     @NotNull
     private Integer scoreOpponentTeam;
-
 }
