@@ -1,12 +1,12 @@
 package com.esgi.jee.basket.db;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
-import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.List;
 
-@Entity
+@Document(indexName = "basket", type = "match")
 @Getter
 @Setter
 @Builder
@@ -15,38 +15,21 @@ import java.util.List;
 public class Match {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private String id;
 
-    @Column()
-    private LocalDate date;
+    private String date;
 
-    @Column()
     private String place;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="team_local_id", nullable = false)
     private Team idNameLocal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="team_opponent_id", nullable = false)
     private Team idNameOpponent;
 
-    @Column(nullable = false)
     private Integer scoreLocal;
 
-    @Column(nullable = false)
     private Integer scoreOpponent;
 
-    @ManyToMany()
     private List<Player> playerTeamLocal;
 
-    @ManyToMany()
     private List<Player> playerTeamOpponent;
-
-    public void addPlayerTeamLocal(Player player) {
-        this.playerTeamLocal.add(player);
-    }
-
 }

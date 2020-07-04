@@ -1,9 +1,6 @@
 package com.esgi.jee.basket.web;
 
-import com.esgi.jee.basket.db.Match;
-import com.esgi.jee.basket.db.MatchRepository;
-import com.esgi.jee.basket.db.Player;
-import com.esgi.jee.basket.db.TeamRepository;
+import com.esgi.jee.basket.db.*;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
 import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,21 +52,21 @@ public class MatchController {
     }
 
     @GetMapping(path = "/match/{id}")
-    public MatchModel getOne(@PathVariable Long id){
+    public MatchModel getOne(@PathVariable String id){
 
-        Match findMatch = matchRepository.findByIdWithTeam(id).orElseThrow(() -> new MatchNotFoundException(id));
+        Match findMatch = matchRepository.findById(id).orElseThrow(() -> new MatchNotFoundException(id));
 
         return modelAssembler.toModel(findMatch);
     }
 
     @PutMapping(path = "/matchs/{id}/score")
-    public MatchModel setScore(@RequestBody @Valid MatchSetScoreModel match, @PathVariable Long id){
+    public MatchModel setScore(@RequestBody @Valid MatchSetScoreModel match, @PathVariable String id){
         Match m = matchService.setScore(match,id);
         return modelAssembler.toModel(m);
     }
 
     @PutMapping(path = "/match/{id}/teamLocal/{idTeamLocal}")
-    public List<PlayerModel> addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable Long id, @PathVariable Long idTeamLocal) {
+    public List<PlayerModel> addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamLocal) {
 
         matchService.addPlayersLocal(players, id, idTeamLocal);
 
