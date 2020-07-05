@@ -1,44 +1,42 @@
 package com.esgi.jee.basket.web;
 
-import com.esgi.jee.basket.db.*;
+import com.esgi.jee.basket.db.Match;
+import com.esgi.jee.basket.exception.InvalidFieldException;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.services.MatchService;
 import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.MatchModel;
-import com.esgi.jee.basket.web.model.PlayerInsertionModel;
-import com.esgi.jee.basket.web.model.PlayerModel;
 import com.esgi.jee.basket.web.model.MatchSetScoreModel;
+import com.esgi.jee.basket.web.model.PlayerInsertionModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
+@RequestMapping("/matchs")
 @RestController
 @RequiredArgsConstructor
 public class MatchController {
 
-    private final MatchRepository matchRepository;
     private final PagedResourcesAssembler<Match> pagedResourcesAssembler;
     private final MatchModelAssembler modelAssembler;
     private final MatchService matchService;
 
-    @GetMapping(path = "/matchs")
+    @GetMapping
     public PagedModel<MatchModel> getAll(Pageable pageable) {
-        Page<Match> matchPage = matchRepository.findAll(pageable);
+        Page<Match> matchPage = matchService.getAll(pageable);
         return pagedResourcesAssembler.toModel(matchPage, modelAssembler);
     }
 
-    @PostMapping(path = "/match")
+    @PostMapping
     public ResponseEntity<?> newGame(@RequestBody @Valid MatchCreateModel match){
         try {
             Match m = matchService.createGame(match);
@@ -51,32 +49,46 @@ public class MatchController {
 
     }
 
-    @GetMapping(path = "/match/{id}")
+    @GetMapping(path = "/{id}")
     public MatchModel getOne(@PathVariable String id){
 
-        Match findMatch = matchRepository.findById(id).orElseThrow(() -> new MatchNotFoundException(id));
+        try {
+            Match findMatch = matchService.getOne(id);
 
-        return modelAssembler.toModel(findMatch);
+            return modelAssembler.toModel(findMatch);
+        }catch (InvalidFieldException e) {
+            throw new MatchNotFoundException(id);
+        }
     }
 
-    @PutMapping(path = "/match/{id}/score")
+    @PutMapping(path = "/{id}/score")
     public MatchModel setScore(@RequestBody @Valid MatchSetScoreModel match, @PathVariable String id){
         Match m = matchService.setScore(match,id);
         return modelAssembler.toModel(m);
     }
 
-    @PutMapping(path = "/match/{id}/teamLocal/{idTeamLocal}")
-    public MatchModel addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamLocal) {
+    @PutMapping(path = "/{id}/teamLocal/{idTeamLocal}")
+    public ResponseEntity<?> addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamLocal) {
 
-        Match m = matchService.addLocalPlayers(players, id, idTeamLocal);
+        try {
+            Match m = matchService.addLocalPlayers(players, id, idTeamLocal);
+            return new ResponseEntity<>(modelAssembler.toModel(m), HttpStatus.OK);
 
-        return modelAssembler.toModel(m);
+        } catch (InvalidFieldException e) {
+            return new ResponseEntity<>("Bad request" , HttpStatus.BAD_REQUEST);
+        }
     }
-    @PutMapping(path = "/match/{id}/teamOpponent/{idTeamOpponent}")
-    public MatchModel addOpponentPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamOpponent) {
 
-        Match m = matchService.addOpponentPlayers(players, id, idTeamOpponent);
+    @PutMapping(path = "/{id}/teamOpponent/{idTeamOpponent}")
+    public ResponseEntity<?> addOpponentPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamOpponent) {
 
-        return modelAssembler.toModel(m);
+        try {
+            Match m = matchService.addOpponentPlayers(players, id, idTeamOpponent);
+            return new ResponseEntity<>(modelAssembler.toModel(m), HttpStatus.OK);
+
+        } catch (InvalidFieldException e) {
+            return new ResponseEntity<>("Bad request" , HttpStatus.BAD_REQUEST);
+        }
+
     }
 }

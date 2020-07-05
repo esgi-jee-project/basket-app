@@ -6,9 +6,11 @@ import com.esgi.jee.basket.exception.MatchNotFoundException;
 import com.esgi.jee.basket.exception.PlayerNotFoundException;
 import com.esgi.jee.basket.web.assembler.PlayerMatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
-import com.esgi.jee.basket.web.model.PlayerInsertionModel;
 import com.esgi.jee.basket.web.model.MatchSetScoreModel;
+import com.esgi.jee.basket.web.model.PlayerInsertionModel;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +28,6 @@ public class MatchService {
     private TeamRepository teamRepository;
     private MatchRepository matchRepository;
     private PlayerRepository playerRepository;
-
-    public PlayerMatchModelAssembler getPlayerMatchModelAssembler() {
-        return playerMatchModelAssembler;
-    }
-
-    private ContractRepository contractRepository;
-    private PlayerMatchModelAssembler playerMatchModelAssembler;
 
     public Match createGame (MatchCreateModel match) {
 
@@ -57,7 +52,7 @@ public class MatchService {
 
         return matchRepository.save(newMatch);
     }
-    public List<Player> mapping (List<Player> players) {
+    private List<Player> mapping (List<Player> players) {
         return players.stream()
                 .map(player -> Player.builder()
                         .id(player.getId())
@@ -65,20 +60,16 @@ public class MatchService {
                         .lastname(player.getLastname())// last name
                         .build())
                 .collect(Collectors.toList());
-
     }
 
     public Match addLocalPlayers (List<PlayerInsertionModel> players, String idMatch, Long idTeamLocal) {
 
-        Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
+        Match match = matchRepository.findById(idMatch).orElseThrow(() -> new InvalidFieldException("Match " + idMatch + "not found"));
         List<Player> findPlayer = playerRepository.findAllById(players.stream().map(PlayerInsertionModel::getId).collect(Collectors.toList()));
 
         if (findPlayer.size() != players.size()){
-            // TODO : Créer un execption pour ce cas la
-            throw new PlayerNotFoundException(idTeamLocal);
+            throw new InvalidFieldException("Both list doesn't have the same size");
         }
-        // TODO : Véréfier que le joueur est bien dans l'équipe
-
         List<Player> addingPlayers = mapping(findPlayer);
         match.setPlayerTeamLocal(addingPlayers);
         matchRepository.save(match);
@@ -86,18 +77,15 @@ public class MatchService {
     }
     public Match addOpponentPlayers (List<PlayerInsertionModel> players, String idMatch, Long idTeamOpponent) {
 
-        Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
-        List<Player> findPlayer = playerRepository.findAllById(players.stream().map(PlayerInsertionModel::getId).collect(Collectors.toList()));
+        Match match = matchRepository.findById(idMatch).orElseThrow(() -> new InvalidFieldException("Match " + idMatch + "not found"));
+        List<Player> findPlayer = playerRepository.findAllByIdCheckTeam(players.stream().map(PlayerInsertionModel::getId).collect(Collectors.toList()), idTeamOpponent);
 
         System.out.println("FIND ALL");
         System.out.println(findPlayer);
 
         if (findPlayer.size() != players.size()){
-            // TODO : Créer un execption pour ce cas la
-            throw new PlayerNotFoundException(idTeamOpponent);
+            throw new InvalidFieldException("Both list doesn't have the same size");
         }
-        // TODO : Véréfier que le joueur est bien dans l'équipe
-
         List<Player> addingPlayers = mapping(findPlayer);
         System.out.println("adding player");
         System.out.println(addingPlayers);
@@ -115,5 +103,12 @@ public class MatchService {
         match.setScoreOpponent(score.getScoreOpponentTeam());
         matchRepository.save(match);
         return match;
+    }
+
+    public Page<Match> getAll (Pageable pageable) {
+        return matchRepository.findAll(pageable);
+    }
+    public Match getOne (String id) {
+        return matchRepository.findById(id).orElseThrow(() -> new  InvalidFieldException ("Match " + id + " not found "));
     }
 }
