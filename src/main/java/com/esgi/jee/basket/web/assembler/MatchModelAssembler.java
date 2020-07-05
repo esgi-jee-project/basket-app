@@ -31,12 +31,12 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
         model.setNameOpponent(teamMatchModelAssembler.toModel(entity.getIdNameOpponent()));
         model.setScoreLocal(entity.getScoreLocal());
         model.setScoreOpponent(entity.getScoreOpponent());
+        model.setPlayerTeamLocal(entity.getPlayerTeamLocal().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()));
+        model.setPlayerTeamOpponent(entity.getPlayerTeamOpponent().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()));
         model.add(
                 WebMvcLinkBuilder.linkTo(methodOn(MatchController.class).getOne(entity.getId())).withSelfRel(),
                 linkTo(methodOn(MatchController.class).getAll(PageRequest.of(0, 10))).withRel("players")
         );
-//        model.setPlayerTeamLocal(entity.getPlayerTeamLocal().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()));
-        //model.setPlayerTeamOpponent(entity.getPlayerTeamOpponent());
 
         return model;
     }

@@ -3,6 +3,7 @@ package com.esgi.jee.basket.services;
 import com.esgi.jee.basket.db.*;
 import com.esgi.jee.basket.exception.InvalidFieldException;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
+import com.esgi.jee.basket.exception.PlayerNotFoundException;
 import com.esgi.jee.basket.web.assembler.PlayerMatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.PlayerInsertionModel;
@@ -56,32 +57,57 @@ public class MatchService {
 
         return matchRepository.save(newMatch);
     }
+    public List<Player> mapping (List<Player> players) {
+        return players.stream()
+                .map(player -> Player.builder()
+                        .id(player.getId())
+                        .firstname(player.getFirstname())// first name
+                        .lastname(player.getLastname())// last name
+                        .build())
+                .collect(Collectors.toList());
 
-    public List<Player> addPlayersLocal (List<PlayerInsertionModel> players, String idMatch, Long idTeamLocal) {
+    }
+
+    public Match addLocalPlayers (List<PlayerInsertionModel> players, String idMatch, Long idTeamLocal) {
+
         Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
+        List<Player> findPlayer = playerRepository.findAllById(players.stream().map(PlayerInsertionModel::getId).collect(Collectors.toList()));
 
-//        List<Player> findPlayer = playerRepository.findAllById(players.stream().map(PlayerInsertionModel::getId).collect(Collectors.toList()));
-//
-//        findPlayer.size() != players.size(){
-//            erreur
-//        }
-
+        if (findPlayer.size() != players.size()){
+            // TODO : Créer un execption pour ce cas la
+            throw new PlayerNotFoundException(idTeamLocal);
+        }
         // TODO : Véréfier que le joueur est bien dans l'équipe
 
-        List<Player> playersLocal = players.stream()
-                                                .map(player -> Player.builder()
-                                                    .id(player.getId())
-                                                    // first name
-                                                    // last name
-                                                    .build())
-                                                .collect(Collectors.toList());
+        List<Player> addingPlayers = mapping(findPlayer);
+        match.setPlayerTeamLocal(addingPlayers);
+        matchRepository.save(match);
+        return match;
+    }
+    public Match addOpponentPlayers (List<PlayerInsertionModel> players, String idMatch, Long idTeamOpponent) {
 
+        Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));
+        List<Player> findPlayer = playerRepository.findAllById(players.stream().map(PlayerInsertionModel::getId).collect(Collectors.toList()));
 
+        System.out.println("FIND ALL");
+        System.out.println(findPlayer);
 
-        match.setPlayerTeamLocal(playersLocal);
+        if (findPlayer.size() != players.size()){
+            // TODO : Créer un execption pour ce cas la
+            throw new PlayerNotFoundException(idTeamOpponent);
+        }
+        // TODO : Véréfier que le joueur est bien dans l'équipe
+
+        List<Player> addingPlayers = mapping(findPlayer);
+        System.out.println("adding player");
+        System.out.println(addingPlayers);
+        match.setPlayerTeamOpponent(addingPlayers);
+
+        System.out.println("match");
+        System.out.println(match.getPlayerTeamOpponent());
 
         matchRepository.save(match);
-        return null;
+        return match;
     }
     public Match setScore(MatchSetScoreModel score, String idMatch) {
         Match match = matchRepository.findById(idMatch).orElseThrow(() -> new MatchNotFoundException(idMatch));

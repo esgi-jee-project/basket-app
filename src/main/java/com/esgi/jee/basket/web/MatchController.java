@@ -38,7 +38,7 @@ public class MatchController {
         return pagedResourcesAssembler.toModel(matchPage, modelAssembler);
     }
 
-    @PostMapping(path = "/game")
+    @PostMapping(path = "/match")
     public ResponseEntity<?> newGame(@RequestBody @Valid MatchCreateModel match){
         try {
             Match m = matchService.createGame(match);
@@ -59,17 +59,24 @@ public class MatchController {
         return modelAssembler.toModel(findMatch);
     }
 
-    @PutMapping(path = "/matchs/{id}/score")
+    @PutMapping(path = "/match/{id}/score")
     public MatchModel setScore(@RequestBody @Valid MatchSetScoreModel match, @PathVariable String id){
         Match m = matchService.setScore(match,id);
         return modelAssembler.toModel(m);
     }
 
     @PutMapping(path = "/match/{id}/teamLocal/{idTeamLocal}")
-    public List<PlayerModel> addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamLocal) {
+    public MatchModel addLocalPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamLocal) {
 
-        matchService.addPlayersLocal(players, id, idTeamLocal);
+        Match m = matchService.addLocalPlayers(players, id, idTeamLocal);
 
-        return new ArrayList<>();
+        return modelAssembler.toModel(m);
+    }
+    @PutMapping(path = "/match/{id}/teamOpponent/{idTeamOpponent}")
+    public MatchModel addOpponentPlayers(@RequestBody @Valid List<PlayerInsertionModel> players, @PathVariable String id, @PathVariable Long idTeamOpponent) {
+
+        Match m = matchService.addOpponentPlayers(players, id, idTeamOpponent);
+
+        return modelAssembler.toModel(m);
     }
 }
