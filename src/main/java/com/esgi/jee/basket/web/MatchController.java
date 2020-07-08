@@ -1,8 +1,11 @@
 package com.esgi.jee.basket.web;
 
 import com.esgi.jee.basket.db.Match;
+import com.esgi.jee.basket.db.MatchSearch;
 import com.esgi.jee.basket.exception.InvalidFieldException;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
+import com.esgi.jee.basket.exception.MatchSearchNotFoundException;
+import com.esgi.jee.basket.services.MatchSearchService;
 import com.esgi.jee.basket.services.MatchService;
 import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
@@ -10,6 +13,9 @@ import com.esgi.jee.basket.web.model.MatchModel;
 import com.esgi.jee.basket.web.model.MatchSetScoreModel;
 import com.esgi.jee.basket.web.model.PlayerInsertionModel;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -18,14 +24,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/matchs")
 @RestController
 @RequiredArgsConstructor
 public class MatchController {
 
+    private final MatchSearchService matchSearchService;
     private final PagedResourcesAssembler<Match> pagedResourcesAssembler;
     private final MatchModelAssembler modelAssembler;
     private final MatchService matchService;
@@ -90,5 +99,32 @@ public class MatchController {
             return new ResponseEntity<>("Bad request" , HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping(path = "/search")
+    public List<MatchModel> searchMatch(@RequestParam String f, HttpServletRequest servletRequest, KeycloakAuthenticationToken token) {
+
+        List<Match> findValue = matchSearchService.search(f);
+
+        KeycloakSecurityContext context = (KeycloakSecurityContext) token.getCredentials();
+        MatchSearch matchSearch = matchSearchService.createHistory(findValue, f, context.getToken().getSubject(), servletRequest.getRemoteAddr());
+
+        return findValue.stream().map(modelAssembler::toModel).collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/search/history")
+    public Page<MatchSearch> searchMatchHistory(KeycloakAuthenticationToken token, Pageable pageable) {
+
+        KeycloakSecurityContext context = (KeycloakSecurityContext) token.getCredentials();
+
+        return matchSearchService.searchHistory(context.getToken().getSubject(), pageable);
+    }
+
+    @GetMapping(path = "/search/history/{id}")
+    public MatchSearch searchMatchHistoryItem(@PathVariable String id, KeycloakAuthenticationToken token) {
+
+        KeycloakSecurityContext context = (KeycloakSecurityContext) token.getCredentials();
+
+        return matchSearchService.getHistoryItem(context.getToken().getSubject(), id).orElseThrow(() -> new MatchSearchNotFoundException(id));
     }
 }
