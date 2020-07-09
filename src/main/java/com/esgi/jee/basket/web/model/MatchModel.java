@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class MatchModel extends RepresentationModel<TeamModel> {
+public class MatchModel extends RepresentationModel<MatchModel> {
 
     @NotNull
     private LocalDate date;

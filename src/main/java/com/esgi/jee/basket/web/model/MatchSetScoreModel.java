@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class MatchSetScoreModel extends RepresentationModel<TeamModel> {
+public class MatchSetScoreModel extends RepresentationModel<MatchSetScoreModel> {
 
     @NotNull
     private Integer scoreLocalTeam;
