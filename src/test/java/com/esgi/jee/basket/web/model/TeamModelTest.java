@@ -23,7 +23,7 @@ public class TeamModelTest {
     @Test
     public void model_with_empty_name_should_be_not_valid(){
 
-        final TeamModel teamModel = new TeamModel(null, "Chicago");
+        final TeamModel teamModel = new TeamModel(null, "Chicago", "Chicago Place");
 
         Set<ConstraintViolation<TeamModel>> violations = validator.validate(teamModel);
         assertThat(violations.size()).isNotZero();
@@ -32,7 +32,16 @@ public class TeamModelTest {
     @Test
     public void model_with_empty_country_should_be_not_valid(){
 
-        final TeamModel teamModel = new TeamModel("Chicago Bulls", null);
+        final TeamModel teamModel = new TeamModel("Chicago Bulls", null, "Chicago Place");
+
+        Set<ConstraintViolation<TeamModel>> violations = validator.validate(teamModel);
+        assertThat(violations.size()).isNotZero();
+    }
+
+    @Test
+    public void model_with_empty_place_should_be_not_valid(){
+
+        final TeamModel teamModel = new TeamModel("Chicago Bulls", "Chicago", null);
 
         Set<ConstraintViolation<TeamModel>> violations = validator.validate(teamModel);
         assertThat(violations.size()).isNotZero();

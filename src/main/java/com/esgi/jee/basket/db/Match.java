@@ -1,33 +1,35 @@
 package com.esgi.jee.basket.db;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.List;
 
-
-@Entity
+@Document(indexName = "basket", type = "match")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Match {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private String id;
 
-    @Column()
-    private LocalDate date;
+    private String date;
 
-    @Column()
     private String place;
 
-   /* @Column(nullable = false)
-    private Long idLocal;
+    private Team idNameLocal;
 
-    @Column(nullable = false)
-    private Long idOpponent;
+    private Team idNameOpponent;
 
-    */
+    private Integer scoreLocal;
 
+    private Integer scoreOpponent;
+
+    private List<Player> playerTeamLocal;
+
+    private List<Player> playerTeamOpponent;
 }

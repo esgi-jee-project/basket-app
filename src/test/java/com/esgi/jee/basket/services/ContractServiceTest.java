@@ -36,6 +36,7 @@ public class ContractServiceTest {
     final LocalDate endDate = LocalDate.now();
     final String teamName = "Chicago";
     final String teamCountry = "Chicago bulls";
+    final String teamPlace = "Chicago place";
     final String playerFirstname = "Michael";
     final String playerLastname = "Michael";
     final Long id = 1L;
@@ -59,6 +60,7 @@ public class ContractServiceTest {
                     .team(Team.builder()
                                 .id(id)
                                 .country(teamCountry)
+                                .place(teamPlace)
                                 .name(teamName)
                             .build())
                 .build();
@@ -69,7 +71,7 @@ public class ContractServiceTest {
         return ContractModel.builder()
                     .startDate(startDate)
                     .endDate(endDate)
-                    .team(new TeamModel(teamName, teamCountry))
+                    .team(new TeamModel(teamName, teamCountry, teamPlace))
                     .player(new PlayerModel(playerFirstname, playerLastname))
                 .build();
     }

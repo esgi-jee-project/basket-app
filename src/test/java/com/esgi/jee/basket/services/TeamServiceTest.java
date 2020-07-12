@@ -31,6 +31,8 @@ public class TeamServiceTest {
 
     final String name = "Chicago Bulls";
     final String country = "Chicago";
+    final String teamPlace = "Chicago place";
+
     final Long id = 1L;
 
     @Before
@@ -49,7 +51,7 @@ public class TeamServiceTest {
 
     public TeamModel getTestTeamModel(){
 
-        return new TeamModel(name, country);
+        return new TeamModel(name, country, teamPlace);
     }
 
     @Test
@@ -130,7 +132,7 @@ public class TeamServiceTest {
     @Test
     public void should_return_update_team_on_update(){
 
-        final TeamModel teamModel = new TeamModel("Chicago 3", null);
+        final TeamModel teamModel = new TeamModel("Chicago 3", null, null);
         final Team teamToUpdate = getTestTeam();
 
         when(teamRepository.findById(id)).thenReturn(Optional.of(teamToUpdate));

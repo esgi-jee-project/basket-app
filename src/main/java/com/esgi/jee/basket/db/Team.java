@@ -3,6 +3,7 @@ package com.esgi.jee.basket.db;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -18,11 +19,16 @@ public class Team {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull
     private String name;
 
     @Column(nullable = false)
+    @NotNull
     private String country;
 
     @OneToMany(mappedBy = "player")
     private Set<Contract> player;
+
+    @Column(nullable = false)
+    private String place;
 }

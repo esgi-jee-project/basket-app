@@ -1,6 +1,7 @@
 package com.esgi.jee.basket.db;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchCrudRepository;
 
-public interface MatchRepository extends JpaRepository <Match, Long> {
+public interface MatchRepository extends ElasticsearchCrudRepository<Match, String> {
+
 }

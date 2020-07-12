@@ -7,4 +7,10 @@ import java.util.List;
 public interface TeamRepository extends PagingAndSortingRepository<Team, Long> {
 
     List<Team> findAll();
+
+    List<Team> findTeamsByName(String name);
+
+
+
+
 }

@@ -9,15 +9,9 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public class TeamModel extends RepresentationModel<TeamModel> {
+public class PlayerInsertionModel extends RepresentationModel<PlayerInsertionModel> {
 
     @NotNull
-    private String name;
+    private Long id;
 
-    @NotNull
-    private String country;
-
-    @NotNull
-    private String place;
 }

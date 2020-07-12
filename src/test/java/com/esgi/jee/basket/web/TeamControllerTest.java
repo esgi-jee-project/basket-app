@@ -36,6 +36,7 @@ public class TeamControllerTest {
     private TeamService teamService;
 
     final String name = "Chicago Bulls";
+    final String place = "Chicago place";
     final String country = "Chicago";
     final Long id = 1L;
 
@@ -52,12 +53,13 @@ public class TeamControllerTest {
                 .id(id)
                 .name(name)
                 .country(country)
+                .place(place)
                 .build();
     }
 
     public TeamModel getTestTeamModel(){
 
-        return new TeamModel(name, country);
+        return new TeamModel(name, country, place);
     }
 
     @Test
@@ -77,6 +79,7 @@ public class TeamControllerTest {
         assertThat(result.getContent()).anySatisfy(model -> {
             assertThat(model.getName()).isEqualTo(name);
             assertThat(model.getCountry()).isEqualTo(country);
+            assertThat(model.getPlace()).isEqualTo(place);
         });
     }
 
