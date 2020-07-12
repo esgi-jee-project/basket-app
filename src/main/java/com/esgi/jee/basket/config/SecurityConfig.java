@@ -39,8 +39,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http
             .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/health").permitAll()
-                .anyRequest().authenticated();
+            .anyRequest().authenticated();
 //            .anyRequest().permitAll();
     }
 }
