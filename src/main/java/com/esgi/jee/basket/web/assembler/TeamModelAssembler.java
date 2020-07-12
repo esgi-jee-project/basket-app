@@ -18,17 +18,20 @@ public class TeamModelAssembler implements RepresentationModelAssembler<Team, Te
 
     @Override
     public TeamModel toModel(Team entity) {
-        TeamModel model = new TeamModel(entity.getName(), entity.getCountry(), entity.getPlace());
-        model.add(
-            WebMvcLinkBuilder.linkTo(methodOn(TeamController.class).getById(entity.getId())).withSelfRel(),
-            linkTo(TeamController.class).withRel("teams"),
-            WebMvcLinkBuilder.linkTo(
-                                methodOn(ContractController.class)
-                                    .getTeamContract(entity.getId(), PageRequest.of(0, 10))
-                            )
-                            .withRel("contract")
-        );
 
-        return model;
+        return TeamModel.builder()
+                .name(entity.getName())
+                .country(entity.getCountry())
+                .place(entity.getPlace())
+                .build()
+                .add(
+                    WebMvcLinkBuilder.linkTo(methodOn(TeamController.class).getById(entity.getId())).withSelfRel(),
+                    linkTo(TeamController.class).withRel("teams"),
+                    WebMvcLinkBuilder.linkTo(
+                            methodOn(ContractController.class)
+                                    .getTeamContract(entity.getId(), PageRequest.of(0, 10))
+                    )
+                            .withRel("contract")
+                );
     }
 }

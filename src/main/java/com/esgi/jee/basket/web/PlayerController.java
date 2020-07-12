@@ -21,9 +21,7 @@ import javax.validation.Valid;
 public class PlayerController {
 
     private final PlayerService playerService;
-
     private final PagedResourcesAssembler<Player> pagedResourcesAssembler;
-
     private final PlayerModelAssembler playerModelAssembler;
 
     @GetMapping(path = "/players")

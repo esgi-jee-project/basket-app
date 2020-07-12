@@ -16,19 +16,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequiredArgsConstructor
 public class PlayerMatchModelAssembler implements RepresentationModelAssembler<Player, PlayerModel> {
 
-    private final ContractModelAssembler contractModelAssembler;
-
     @Override
     public PlayerModel toModel(Player entity) {
 
-        PlayerModel model = new PlayerModel(entity.getFirstname(), entity.getLastname());
-         
-        model.add(
-                WebMvcLinkBuilder.linkTo(methodOn(PlayerController.class).getOne(entity.getId())).withSelfRel(),
-                linkTo(methodOn(PlayerController.class).getAll(PageRequest.of(0, 10))).withRel("players")
-        );
-
-
-        return model;
+       return PlayerModel.builder()
+                .firstname(entity.getFirstname())
+                .lastname(entity.getLastname())
+                .build()
+                .add(
+                    WebMvcLinkBuilder.linkTo(methodOn(PlayerController.class).getOne(entity.getId())).withSelfRel(),
+                    linkTo(methodOn(PlayerController.class).getAll(PageRequest.of(0, 10))).withRel("players")
+                );
     }
 }

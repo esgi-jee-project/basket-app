@@ -24,20 +24,19 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
     private PlayerModelAssembler playerModelAssembler;
 
     public MatchModel toModel(Match entity) {
-        MatchModel model = new MatchModel();
-        model.setDate(LocalDate.parse(entity.getDate()));
-        model.setPlace(entity.getPlace());
-        model.setNameLocal(teamMatchModelAssembler.toModel(entity.getIdNameLocal()));
-        model.setNameOpponent(teamMatchModelAssembler.toModel(entity.getIdNameOpponent()));
-        model.setScoreLocal(entity.getScoreLocal());
-        model.setScoreOpponent(entity.getScoreOpponent());
-        model.setPlayerTeamLocal(entity.getPlayerTeamLocal().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()));
-        model.setPlayerTeamOpponent(entity.getPlayerTeamOpponent().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()));
-        model.add(
-                WebMvcLinkBuilder.linkTo(methodOn(MatchController.class).getOne(entity.getId())).withSelfRel(),
-                linkTo(methodOn(MatchController.class).getAll(PageRequest.of(0, 10))).withRel("players")
-        );
-
-        return model;
+        return MatchModel.builder()
+                .date(LocalDate.parse(entity.getDate()))
+                .place(entity.getPlace())
+                .nameLocal(teamMatchModelAssembler.toModel(entity.getIdNameLocal()))
+                .nameOpponent(teamMatchModelAssembler.toModel(entity.getIdNameOpponent()))
+                .scoreLocal(entity.getScoreLocal())
+                .scoreOpponent(entity.getScoreOpponent())
+                .playerTeamLocal(entity.getPlayerTeamLocal().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()))
+                .playerTeamOpponent(entity.getPlayerTeamOpponent().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()))
+                .build()
+                .add(
+                    WebMvcLinkBuilder.linkTo(methodOn(MatchController.class).getOne(entity.getId())).withSelfRel(),
+                    linkTo(methodOn(MatchController.class).getAll(PageRequest.of(0, 10))).withRel("players")
+                );
     }
 }

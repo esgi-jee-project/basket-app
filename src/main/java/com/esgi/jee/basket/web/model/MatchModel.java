@@ -2,6 +2,7 @@ package com.esgi.jee.basket.web.model;
 
 import com.esgi.jee.basket.db.Player;
 import com.esgi.jee.basket.db.Team;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 public class MatchModel extends RepresentationModel<MatchModel> {
