@@ -75,9 +75,6 @@ public class MatchSearchService {
 
     public Optional<MatchSearch> getHistoryItem(String userSubject, String searchId){
 
-//        System.out.println(userSubject);
-//        System.out.println(searchId);
-
-        return matchSearchRepository.findById(searchId);
+        return matchSearchRepository.findByIdAndUserId(searchId, userSubject);
     }
 }

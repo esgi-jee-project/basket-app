@@ -8,10 +8,8 @@ import com.esgi.jee.basket.exception.MatchSearchNotFoundException;
 import com.esgi.jee.basket.services.MatchSearchService;
 import com.esgi.jee.basket.services.MatchService;
 import com.esgi.jee.basket.web.assembler.MatchModelAssembler;
-import com.esgi.jee.basket.web.model.MatchCreateModel;
-import com.esgi.jee.basket.web.model.MatchModel;
-import com.esgi.jee.basket.web.model.MatchSetScoreModel;
-import com.esgi.jee.basket.web.model.PlayerInsertionModel;
+import com.esgi.jee.basket.web.assembler.MatchSearchModelAssembler;
+import com.esgi.jee.basket.web.model.*;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
@@ -36,7 +34,9 @@ public class MatchController {
 
     private final MatchSearchService matchSearchService;
     private final PagedResourcesAssembler<Match> pagedResourcesAssembler;
+    private final PagedResourcesAssembler<MatchSearch> matchSearchPagedResourcesAssembler;
     private final MatchModelAssembler modelAssembler;
+    private final MatchSearchModelAssembler matchSearchModelAssembler;
     private final MatchService matchService;
 
     @GetMapping
@@ -113,18 +113,21 @@ public class MatchController {
     }
 
     @GetMapping(path = "/search/history")
-    public Page<MatchSearch> searchMatchHistory(KeycloakAuthenticationToken token, Pageable pageable) {
+    public PagedModel<MatchSearchModel> searchMatchHistory(KeycloakAuthenticationToken token, Pageable pageable) {
 
         KeycloakSecurityContext context = (KeycloakSecurityContext) token.getCredentials();
+        Page<MatchSearch> find = matchSearchService.searchHistory(context.getToken().getSubject(), pageable);
 
-        return matchSearchService.searchHistory(context.getToken().getSubject(), pageable);
+        return matchSearchPagedResourcesAssembler.toModel(find, matchSearchModelAssembler);
     }
 
     @GetMapping(path = "/search/history/{id}")
-    public MatchSearch searchMatchHistoryItem(@PathVariable String id, KeycloakAuthenticationToken token) {
+    public MatchSearchModel searchMatchHistoryItem(@PathVariable String id, KeycloakAuthenticationToken token) {
 
         KeycloakSecurityContext context = (KeycloakSecurityContext) token.getCredentials();
 
-        return matchSearchService.getHistoryItem(context.getToken().getSubject(), id).orElseThrow(() -> new MatchSearchNotFoundException(id));
+        MatchSearch findMatchSearch = matchSearchService.getHistoryItem(context.getToken().getSubject(), id).orElseThrow(() -> new MatchSearchNotFoundException(id));
+
+        return matchSearchModelAssembler.toModel(findMatchSearch);
     }
 }
