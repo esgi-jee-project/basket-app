@@ -21,6 +21,7 @@ public class MatchModelAssemblerTest {
 
     @Test
     public void should_return_match_model_on_convert () {
+        Long id = 1L;
         LocalDate date = LocalDate.now();
         String place = "Los Angeles";
         String localTeamName = "Lakers";
@@ -32,13 +33,15 @@ public class MatchModelAssemblerTest {
         String oppenentTeamPlayerFirstname = "Rajon";
         String opponentTeamPlayerLastname = "RONDO";
         int localScore = 90;
-        int pponentScore = 91;
+        int opponentScore = 91;
 
         Player localPlayer = Player.builder()
+                                        .id(id)
                                         .firstname(localTeamPlayerFirstname)
                                         .lastname(localTeamPlayerLastname)
                                     .build();
         Player opponentPlayer = Player.builder()
+                                            .id(id)
                                             .firstname(oppenentTeamPlayerFirstname)
                                             .lastname(opponentTeamPlayerLastname)
                                         .build();
@@ -51,7 +54,15 @@ public class MatchModelAssemblerTest {
                                     .country(opponentTeamCountry)
                                 .build();
         Math match = Match.builder()
-                            .
+                            .date("2020-10-10")
+                            .playerTeamLocal(localPlayer.getId())
+                            .playerTeamOpponent(opponentPlayer)
+                            .idNameLocal(localTeam)
+                            .idNameOpponent(opponentTeam)
+                            .scoreLocal(localScore)
+                            .scoreOpponent(opponentScore)
+                        .build();
+
 
 
     }
