@@ -31,6 +31,7 @@ public class TeamService {
         Team team = Team.builder()
                             .name(data.getName())
                             .country(data.getCountry())
+                            .place(data.getPlace())
                         .build();
 
         return teamRepository.save(team);
