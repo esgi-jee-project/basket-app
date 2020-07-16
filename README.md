@@ -42,3 +42,13 @@ docker build -t esgi-jee-api .
 ```bash
 docker run -p 8080:8080 -e ....All the env esgi-jee-api
 ```
+
+## Available routes
+
+### Match
+
+### Team 
+
+### Player
+
+### Contract
