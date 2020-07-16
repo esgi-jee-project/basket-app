@@ -1,5 +1,6 @@
-package com.esgi.jee.basket.db;
+package com.esgi.jee.basket.team.infrastructure.dao;
 
+import com.esgi.jee.basket.db.Contract;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Team {
+public class HibernateTeam {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

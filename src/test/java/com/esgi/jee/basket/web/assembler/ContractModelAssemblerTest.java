@@ -2,9 +2,9 @@ package com.esgi.jee.basket.web.assembler;
 
 import com.esgi.jee.basket.db.Contract;
 import com.esgi.jee.basket.db.Player;
-import com.esgi.jee.basket.db.Team;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModelAssembler;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import com.esgi.jee.basket.web.model.ContractModel;
-import com.esgi.jee.basket.web.model.PlayerModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class ContractModelAssemblerTest {
                     .firstname(playerFirstname)
                     .lastname(playerLastname)
                 .build();
-        Team contractTeam = Team.builder()
+        HibernateTeam contractTeam = HibernateTeam.builder()
                                 .id(id)
                                 .country(teamCountry)
                                 .name(teamName)

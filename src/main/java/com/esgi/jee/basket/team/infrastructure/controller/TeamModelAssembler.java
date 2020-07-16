@@ -1,13 +1,10 @@
-package com.esgi.jee.basket.web.assembler;
+package com.esgi.jee.basket.team.infrastructure.controller;
 
-import com.esgi.jee.basket.db.Team;
+import com.esgi.jee.basket.team.domain.model.Team;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import com.esgi.jee.basket.web.ContractController;
-import com.esgi.jee.basket.web.TeamController;
-import com.esgi.jee.basket.web.model.TeamModel;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -20,9 +17,9 @@ public class TeamModelAssembler implements RepresentationModelAssembler<Team, Te
     public TeamModel toModel(Team entity) {
         TeamModel model = new TeamModel(entity.getName(), entity.getCountry(), entity.getPlace());
         model.add(
-            WebMvcLinkBuilder.linkTo(methodOn(TeamController.class).getById(entity.getId())).withSelfRel(),
+            linkTo(methodOn(TeamController.class).getById(entity.getId())).withSelfRel(),
             linkTo(TeamController.class).withRel("teams"),
-            WebMvcLinkBuilder.linkTo(
+            linkTo(
                                 methodOn(ContractController.class)
                                     .getTeamContract(entity.getId(), PageRequest.of(0, 10))
                             )
@@ -30,5 +27,10 @@ public class TeamModelAssembler implements RepresentationModelAssembler<Team, Te
         );
 
         return model;
+    }
+
+    public Team toTeam(TeamModel entity){
+
+        return new Team(entity.getName(), entity.getCountry(), entity.getPlace());
     }
 }

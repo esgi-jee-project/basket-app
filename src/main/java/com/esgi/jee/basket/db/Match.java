@@ -1,5 +1,6 @@
 package com.esgi.jee.basket.db;
 
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -21,9 +22,9 @@ public class Match {
 
     private String place;
 
-    private Team idNameLocal;
+    private HibernateTeam idNameLocal;
 
-    private Team idNameOpponent;
+    private HibernateTeam idNameOpponent;
 
     private Integer scoreLocal;
 

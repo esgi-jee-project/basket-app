@@ -1,9 +1,11 @@
-package com.esgi.jee.basket.web;
+package com.esgi.jee.basket.team.infrastructure.controller;
 
-import com.esgi.jee.basket.db.Team;
-import com.esgi.jee.basket.services.TeamService;
-import com.esgi.jee.basket.web.assembler.TeamModelAssembler;
-import com.esgi.jee.basket.web.model.TeamModel;
+import com.esgi.jee.basket.team.domain.model.Team;
+import com.esgi.jee.basket.team.use_cases.CreateTeam;
+import com.esgi.jee.basket.team.use_cases.FindTeam;
+import com.esgi.jee.basket.team.use_cases.FindTeamById;
+import com.esgi.jee.basket.team.use_cases.UpdateTeam;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +36,16 @@ public class TeamControllerTest {
     private TeamController teamController;
 
     @Mock
-    private TeamService teamService;
+    private FindTeam findTeam;
+
+    @Mock
+    private CreateTeam createTeam;
+
+    @Mock
+    private UpdateTeam updateTeam;
+
+    @Mock
+    private FindTeamById findTeamById;
 
     final String name = "Chicago Bulls";
     final String place = "Chicago place";
@@ -44,17 +56,13 @@ public class TeamControllerTest {
     public void setUp() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        this.teamController = new TeamController(teamService, new PagedResourcesAssembler<>(null, null), new TeamModelAssembler());
+        this.teamController = new TeamController(findTeam, createTeam, findTeamById, updateTeam, new PagedResourcesAssembler<>(null, null), new TeamModelAssembler());
     }
 
     public Team getTestTeam(){
 
-        return Team.builder()
-                .id(id)
-                .name(name)
-                .country(country)
-                .place(place)
-                .build();
+        return new Team(id, name, country, new HashSet<>(), place);
+
     }
 
     public TeamModel getTestTeamModel(){
@@ -69,14 +77,14 @@ public class TeamControllerTest {
         List<Team> allTeams = Collections.singletonList(getTestTeam());
         Page<Team> allTeamsPage = new PageImpl<>(allTeams, pageable, 40);
 
-        when(teamService.findAll(any(Pageable.class))).thenReturn(allTeamsPage);
+        when(findTeam.execute(any(Pageable.class))).thenReturn(allTeamsPage);
 
         PagedModel<TeamModel> result = teamController.getAll(pageable);
         assertThat(result.getMetadata().getTotalElements()).isEqualTo(40);
         assertThat(result.getMetadata().getTotalPages()).isEqualTo(2);
         assertThat(result.getMetadata().getNumber()).isEqualTo(0);
-        assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent()).anySatisfy(model -> {
+        Assertions.assertThat(result.getContent()).hasSize(1);
+        Assertions.assertThat(result.getContent()).anySatisfy(model -> {
             assertThat(model.getName()).isEqualTo(name);
             assertThat(model.getCountry()).isEqualTo(country);
             assertThat(model.getPlace()).isEqualTo(place);
@@ -89,7 +97,7 @@ public class TeamControllerTest {
         final TeamModel teamModel = getTestTeamModel();
         final Team teamRepo = getTestTeam();
 
-        when(teamService.create(any(TeamModel.class))).thenReturn(teamRepo);
+        when(createTeam.execute(any(Team.class))).thenReturn(teamRepo);
 
         ResponseEntity<TeamModel> createdTeam = teamController.create(teamModel);
         assertThat(createdTeam.getBody()).satisfies(model -> {

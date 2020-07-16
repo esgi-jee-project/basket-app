@@ -1,7 +1,7 @@
-package com.esgi.jee.basket.web.assembler;
+package com.esgi.jee.basket.team.infrastructure.controller;
 
-import com.esgi.jee.basket.db.Team;
-import com.esgi.jee.basket.web.model.TeamModel;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeamAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,13 +22,13 @@ public class TeamModelAssemblerTest {
             long id = 1L;
             String name = "Chicago Bulls";
             String country = "Chicago";
-            Team toConvert = Team.builder()
+            HibernateTeam toConvert = HibernateTeam.builder()
                                     .id(id)
                                     .name(name)
                                     .country(country)
                                 .build();
 
-            TeamModel convertTeam = this.teamModelAssembler.toModel(toConvert);
+            TeamModel convertTeam = this.teamModelAssembler.toModel(HibernateTeamAdapter.modelToTeam(toConvert));
 
             assertThat(convertTeam.getName()).isEqualTo(name);
             assertThat(convertTeam.getCountry()).isEqualTo(country);

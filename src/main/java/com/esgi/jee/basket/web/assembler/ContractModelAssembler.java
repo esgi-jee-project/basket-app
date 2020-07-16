@@ -1,13 +1,14 @@
 package com.esgi.jee.basket.web.assembler;
 
 import com.esgi.jee.basket.db.Contract;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModelAssembler;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeamAdapter;
 import com.esgi.jee.basket.web.ContractController;
 import com.esgi.jee.basket.web.PlayerController;
-import com.esgi.jee.basket.web.TeamController;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamController;
 import com.esgi.jee.basket.web.model.ContractModel;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,7 +26,7 @@ public class ContractModelAssembler implements RepresentationModelAssembler<Cont
         ContractModel.ContractModelBuilder builder = ContractModel.builder();
         builder.startDate(entity.getStartDate());
         builder.endDate(entity.getEndDate());
-        builder.team(teamModelAssembler.toModel(entity.getTeam()));
+        builder.team(teamModelAssembler.toModel(HibernateTeamAdapter.modelToTeam(entity.getTeam())));
         builder.player(playerModelAssembler.toModel(entity.getPlayer()));
 
         return builder.build()

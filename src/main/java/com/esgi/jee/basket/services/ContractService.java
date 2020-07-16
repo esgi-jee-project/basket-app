@@ -3,9 +3,8 @@ package com.esgi.jee.basket.services;
 import com.esgi.jee.basket.db.Contract;
 import com.esgi.jee.basket.db.ContractRepository;
 import com.esgi.jee.basket.db.Player;
-import com.esgi.jee.basket.db.Team;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import com.esgi.jee.basket.web.model.ContractModel;
-import com.esgi.jee.basket.web.model.TeamModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,7 @@ public class ContractService {
         return contractRepository.findPlayerContract(idPlayer, pageable);
     }
 
-    public Contract create(ContractModel data, Player player, Team team){
+    public Contract create(ContractModel data, Player player, HibernateTeam team){
 
         Contract contract = Contract.builder()
                     .startDate(data.getStartDate())

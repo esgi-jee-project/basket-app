@@ -1,5 +1,6 @@
 package com.esgi.jee.basket.web.model;
 
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModel;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 

@@ -1,9 +1,10 @@
 package com.esgi.jee.basket.services;
 
 import com.esgi.jee.basket.db.*;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModel;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import com.esgi.jee.basket.web.model.ContractModel;
 import com.esgi.jee.basket.web.model.PlayerModel;
-import com.esgi.jee.basket.web.model.TeamModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +58,7 @@ public class ContractServiceTest {
                                 .firstname(playerFirstname)
                                 .lastname(playerLastname)
                             .build())
-                    .team(Team.builder()
+                    .team(HibernateTeam.builder()
                                 .id(id)
                                 .country(teamCountry)
                                 .place(teamPlace)
@@ -121,7 +122,7 @@ public class ContractServiceTest {
                                         .firstname(playerFirstname)
                                         .lastname(playerLastname)
                                     .build();
-        final Team team = Team.builder()
+        final HibernateTeam team = HibernateTeam.builder()
                                 .name(teamName)
                                 .country(teamCountry)
                             .build();

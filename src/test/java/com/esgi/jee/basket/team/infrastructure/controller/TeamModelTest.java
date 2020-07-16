@@ -1,6 +1,5 @@
-package com.esgi.jee.basket.web.model;
+package com.esgi.jee.basket.team.infrastructure.controller;
 
-import com.esgi.jee.basket.services.TeamService;
 import org.junit.Before;
 import org.junit.Test;
 

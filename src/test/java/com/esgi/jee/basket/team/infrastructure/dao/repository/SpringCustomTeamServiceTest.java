@@ -1,8 +1,9 @@
-package com.esgi.jee.basket.services;
+package com.esgi.jee.basket.team.infrastructure.dao.repository;
 
-import com.esgi.jee.basket.db.Team;
-import com.esgi.jee.basket.db.TeamRepository;
-import com.esgi.jee.basket.web.model.TeamModel;
+import com.esgi.jee.basket.services.TeamService;
+import com.esgi.jee.basket.team.domain.model.Team;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModel;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +24,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TeamServiceTest {
+public class SpringCustomTeamServiceTest {
 
-    private TeamService teamService;
+    private SpringCustomTeamRepository springCustomTeamRepository;
 
     @Mock
-    private TeamRepository teamRepository;
+    private SpringTeamRepository teamRepository;
 
     final String name = "Chicago Bulls";
     final String country = "Chicago";
@@ -37,16 +39,22 @@ public class TeamServiceTest {
 
     @Before
     public void setUp(){
-        this.teamService = new TeamService(teamRepository);
+        this.springCustomTeamRepository = new SpringCustomTeamRepository(teamRepository);
     }
 
     public Team getTestTeam(){
 
-       return Team.builder()
-               .id(id)
-               .name(name)
-               .country(country)
-               .build();
+        return new Team(id, name, country, new HashSet<>(), teamPlace);
+    }
+
+    public HibernateTeam getHibernateTeam(){
+
+        return HibernateTeam.builder()
+                    .id(id)
+                    .name(name)
+                    .country(country)
+                    .place(teamPlace)
+                .build();
     }
 
     public TeamModel getTestTeamModel(){
@@ -58,12 +66,12 @@ public class TeamServiceTest {
     public void should_return_list_on_find_all(){
 
         Pageable pageable = PageRequest.of(0, 20);
-        List<Team> allTeams = Collections.singletonList(getTestTeam());
-        Page<Team> allTeamsPage = new PageImpl<>(allTeams, pageable, 40);
+        List<HibernateTeam> allTeams = Collections.singletonList(getHibernateTeam());
+        Page<HibernateTeam> allTeamsPage = new PageImpl<>(allTeams, pageable, 40);
 
         when(teamRepository.findAll(any(Pageable.class))).thenReturn(allTeamsPage);
 
-        Page<Team> result = teamService.findAll(pageable);
+        Page<Team> result = springCustomTeamRepository.findAll(pageable);
         assertThat(result.getTotalElements()).isEqualTo(40);
         assertThat(result.getTotalPages()).isEqualTo(2);
         assertThat(result.getNumber()).isEqualTo(0);
@@ -75,41 +83,26 @@ public class TeamServiceTest {
     @Test
     public void should_return_team_on_create() {
 
-        final TeamModel teamModel = getTestTeamModel();
-        final Team teamRepo = getTestTeam();
+        final Team teamModel = getTestTeam();
+        final HibernateTeam teamRepo = getHibernateTeam();
 
-        when(teamRepository.save(any(Team.class))).thenReturn(teamRepo);
+        when(teamRepository.save(any(HibernateTeam.class))).thenReturn(teamRepo);
 
-        Team createdTeam = teamService.create(teamModel);
+        Team createdTeam = springCustomTeamRepository.save(teamModel);
         assertThat(createdTeam.getId()).isEqualTo(id);
         assertThat(createdTeam.getName()).isEqualTo(name);
         assertThat(createdTeam.getCountry()).isEqualTo(country);
     }
 
     @Test
-    public void should_call_save_repository_method_on_create() {
-
-        final TeamModel teamModel = getTestTeamModel();
-
-        teamService.create(teamModel);
-
-        ArgumentCaptor<Team> teamArgumentCaptor = ArgumentCaptor.forClass(Team.class);
-        verify(teamRepository).save(teamArgumentCaptor.capture());
-        Team exceptedTeam = teamArgumentCaptor.getValue();
-        assertThat(exceptedTeam.getId()).isNull();
-        assertThat(exceptedTeam.getName()).isEqualTo(name);
-        assertThat(exceptedTeam.getCountry()).isEqualTo(country);
-    }
-
-    @Test
     public void should_return_team_on_find_by_id(){
 
-        final Team teamRepo = getTestTeam();
+        final HibernateTeam teamRepo = getHibernateTeam();
+        final Team team = getTestTeam();
 
         when(teamRepository.findById(id)).thenReturn(Optional.of(teamRepo));
 
-        Optional<Team> createdTeam = teamService.findById(id);
-        assertThat(createdTeam).hasValue(teamRepo);
+        Optional<Team> createdTeam = springCustomTeamRepository.findById(id);
         assertThat(createdTeam).hasValueSatisfying(findTeam -> {
             assertThat(findTeam.getId()).isEqualTo(id);
             assertThat(findTeam.getName()).isEqualTo(name);
@@ -120,26 +113,22 @@ public class TeamServiceTest {
     @Test
     public void should_return_empty_optional_on_find_by_id(){
 
-        final TeamModel teamModel = getTestTeamModel();
-        final Team teamRepo = getTestTeam();
-
         when(teamRepository.findById(id)).thenReturn(Optional.empty());
 
-        Optional<Team> createdTeam = teamService.findById(id);
+        Optional<Team> createdTeam = springCustomTeamRepository.findById(id);
         assertThat(createdTeam).isEmpty();
     }
 
     @Test
     public void should_return_update_team_on_update(){
 
-        final TeamModel teamModel = new TeamModel("Chicago 3", null, null);
-        final Team teamToUpdate = getTestTeam();
+        final Team teamModel = new Team("Chicago 3", null, null);
+        final HibernateTeam teamToUpdate = getHibernateTeam();
 
         when(teamRepository.findById(id)).thenReturn(Optional.of(teamToUpdate));
-        when(teamRepository.save(any(Team.class))).thenReturn(teamToUpdate);
+        when(teamRepository.save(any(HibernateTeam.class))).thenReturn(teamToUpdate);
 
-        Optional<Team> createdTeam = teamService.update(id, teamModel);
-        assertThat(createdTeam).hasValue(teamToUpdate);
+        Optional<Team> createdTeam = springCustomTeamRepository.update(id, teamModel);
         assertThat(createdTeam).hasValueSatisfying(findTeam -> {
             assertThat(findTeam.getId()).isEqualTo(id);
             assertThat(findTeam.getName()).isEqualTo("Chicago 3");

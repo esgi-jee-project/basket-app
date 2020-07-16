@@ -1,8 +1,8 @@
 package com.esgi.jee.basket.services;
 
-import com.esgi.jee.basket.db.Team;
-import com.esgi.jee.basket.db.TeamRepository;
-import com.esgi.jee.basket.web.model.TeamModel;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
+import com.esgi.jee.basket.team.infrastructure.dao.repository.SpringTeamRepository;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,9 +14,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TeamService {
 
-    private final TeamRepository teamRepository;
+    private final SpringTeamRepository teamRepository;
 
-    public Page<Team> findAll(Pageable pageable){
+    public Page<HibernateTeam> findAll(Pageable pageable){
 
         return teamRepository.findAll(pageable);
     }
@@ -26,9 +26,9 @@ public class TeamService {
         return teamRepository.existsById(id);
     }
 
-    public Team create(TeamModel data){
+    public HibernateTeam create(TeamModel data){
 
-        Team team = Team.builder()
+        HibernateTeam team = HibernateTeam.builder()
                             .name(data.getName())
                             .country(data.getCountry())
                             .place(data.getPlace())
@@ -37,14 +37,14 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
-    public Optional<Team> findById(Long id){
+    public Optional<HibernateTeam> findById(Long id){
 
         return teamRepository.findById(id);
     }
 
-    public Optional<Team> update(Long id, TeamModel data){
+    public Optional<HibernateTeam> update(Long id, TeamModel data){
 
-        Optional<Team> find = teamRepository.findById(id);
+        Optional<HibernateTeam> find = teamRepository.findById(id);
 
         return find.map(team -> {
             team.setName(data.getName() != null ? data.getName() : team.getName());

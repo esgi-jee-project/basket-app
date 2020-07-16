@@ -1,5 +1,6 @@
 package com.esgi.jee.basket.db;
 
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class Contract {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "team_id", nullable = false)
     @JsonIgnore
-    private Team team;
+    private HibernateTeam team;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="player_id", nullable = false)

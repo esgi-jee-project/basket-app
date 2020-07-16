@@ -1,6 +1,8 @@
 package com.esgi.jee.basket.web.assembler;
 
 import com.esgi.jee.basket.db.Contract;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModelAssembler;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeamAdapter;
 import com.esgi.jee.basket.web.ContractController;
 import com.esgi.jee.basket.web.model.ContractWithTeamModel;
 import lombok.AllArgsConstructor;
@@ -22,7 +24,7 @@ public class ContractWithTeamModelAssembler implements RepresentationModelAssemb
         ContractWithTeamModel.ContractWithTeamModelBuilder builder = ContractWithTeamModel.builder();
         builder.startDate(entity.getStartDate());
         builder.endDate(entity.getEndDate());
-        builder.team(teamModelAssembler.toModel(entity.getTeam()));
+        builder.team(teamModelAssembler.toModel(HibernateTeamAdapter.modelToTeam(entity.getTeam())));
 
         return builder.build()
                 .add(linkTo(methodOn(ContractController.class).selectOne(entity.getId())).withSelfRel());

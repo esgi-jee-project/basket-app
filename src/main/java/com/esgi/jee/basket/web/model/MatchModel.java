@@ -1,7 +1,6 @@
 package com.esgi.jee.basket.web.model;
 
-import com.esgi.jee.basket.db.Player;
-import com.esgi.jee.basket.db.Team;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModel;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;

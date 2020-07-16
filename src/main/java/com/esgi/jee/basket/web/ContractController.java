@@ -2,7 +2,7 @@ package com.esgi.jee.basket.web;
 
 import com.esgi.jee.basket.db.Contract;
 import com.esgi.jee.basket.db.Player;
-import com.esgi.jee.basket.db.Team;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
 import com.esgi.jee.basket.exception.ContractNotFoundException;
 import com.esgi.jee.basket.exception.PlayerNotFoundException;
 import com.esgi.jee.basket.exception.TeamNotFoundException;
@@ -69,7 +69,7 @@ public class ContractController {
     public ResponseEntity<ContractModel> createContract(@PathVariable Long teamId, @PathVariable Long playerId, @RequestBody @Valid ContractModel contract){
 
         Player player = playerService.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
-        Team team = teamService.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+        HibernateTeam team = teamService.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
 
         Contract newContract = contractService.create(contract, player, team);
         ContractModel contractModel = contractModelAssembler.toModel(newContract);

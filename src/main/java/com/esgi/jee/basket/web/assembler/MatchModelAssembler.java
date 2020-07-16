@@ -1,6 +1,8 @@
 package com.esgi.jee.basket.web.assembler;
 
 import com.esgi.jee.basket.db.Match;
+import com.esgi.jee.basket.team.infrastructure.controller.TeamModelAssembler;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeamAdapter;
 import com.esgi.jee.basket.web.MatchController;
 import com.esgi.jee.basket.web.model.MatchModel;
 import lombok.AllArgsConstructor;
@@ -27,8 +29,8 @@ public class MatchModelAssembler implements RepresentationModelAssembler<Match, 
         MatchModel model = new MatchModel();
         model.setDate(LocalDate.parse(entity.getDate()));
         model.setPlace(entity.getPlace());
-        model.setNameLocal(teamMatchModelAssembler.toModel(entity.getIdNameLocal()));
-        model.setNameOpponent(teamMatchModelAssembler.toModel(entity.getIdNameOpponent()));
+        model.setNameLocal(teamMatchModelAssembler.toModel(HibernateTeamAdapter.modelToTeam(entity.getIdNameLocal())));
+        model.setNameOpponent(teamMatchModelAssembler.toModel(HibernateTeamAdapter.modelToTeam(entity.getIdNameOpponent())));
         model.setScoreLocal(entity.getScoreLocal());
         model.setScoreOpponent(entity.getScoreOpponent());
         model.setPlayerTeamLocal(entity.getPlayerTeamLocal().stream().map(playerModelAssembler::toModel).collect(Collectors.toList()));

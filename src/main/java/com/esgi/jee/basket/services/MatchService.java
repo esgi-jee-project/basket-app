@@ -3,8 +3,8 @@ package com.esgi.jee.basket.services;
 import com.esgi.jee.basket.db.*;
 import com.esgi.jee.basket.exception.InvalidFieldException;
 import com.esgi.jee.basket.exception.MatchNotFoundException;
-import com.esgi.jee.basket.exception.PlayerNotFoundException;
-import com.esgi.jee.basket.web.assembler.PlayerMatchModelAssembler;
+import com.esgi.jee.basket.team.infrastructure.dao.HibernateTeam;
+import com.esgi.jee.basket.team.infrastructure.dao.repository.SpringTeamRepository;
 import com.esgi.jee.basket.web.model.MatchCreateModel;
 import com.esgi.jee.basket.web.model.MatchSetScoreModel;
 import com.esgi.jee.basket.web.model.PlayerInsertionModel;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class MatchService {
 
-    private TeamRepository teamRepository;
+    private SpringTeamRepository teamRepository;
     private MatchRepository matchRepository;
     private PlayerRepository playerRepository;
 
@@ -33,10 +33,10 @@ public class MatchService {
 
         if(match.getIdTeamOpponent().equals(match.getIdTeamLocal())) throw new InvalidFieldException("The same team can't be in a match");
 
-        Team teamLocal = teamRepository.findById(match.getIdTeamLocal())
+        HibernateTeam teamLocal = teamRepository.findById(match.getIdTeamLocal())
                                         .orElseThrow(() -> new InvalidFieldException("Team id " + match.getIdTeamLocal() + " Not found"));
 
-        Team teamOpponent = teamRepository.findById(match.getIdTeamOpponent())
+        HibernateTeam teamOpponent = teamRepository.findById(match.getIdTeamOpponent())
                                         .orElseThrow(() -> new InvalidFieldException("Team id " + match.getIdTeamOpponent() + " Not found"));
 
         Match newMatch = Match.builder()
